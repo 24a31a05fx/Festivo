@@ -1,10 +1,10 @@
 // Gemini models to try, in order of preference. When one is out of quota,
 // overloaded or retired, the next one is used automatically.
 export const DEFAULT_GEMINI_MODELS = Object.freeze([
+  'gemini-3.8-flash',
+  'gemini-3.5-flash-lite',
   'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-2.0-flash',
-  'gemini-2.0-flash-lite',
   'gemini-2.5-pro',
 ]);
 
@@ -28,7 +28,7 @@ function readModels(env) {
   if (raw === undefined || raw.trim() === '') return DEFAULT_GEMINI_MODELS;
   const models = [...new Set(raw.split(',').map((name) => name.trim()).filter(Boolean))];
   if (models.length === 0 || models.some((name) => !MODEL_NAME.test(name))) {
-    throw new Error('GEMINI_MODELS must be a comma separated list of model names such as gemini-2.5-flash.');
+    throw new Error('GEMINI_MODELS must be a comma separated list of model names such as gemini-3.8-flash.');
   }
   return Object.freeze(models);
 }

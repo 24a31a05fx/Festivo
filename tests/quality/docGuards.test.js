@@ -103,4 +103,30 @@ describe('documentation consistency guards', () => {
       assert.ok(readme.includes(phrase), `README must contain ${phrase}`);
     }
   });
+
+  it('ensures all files and directories in README repository structure tree actually exist on disk', () => {
+    const readme = read('README.md');
+    const match = /## Repository Structure[\s\S]*?```[a-z]*\r?\n([\s\S]*?)\r?\n```/.exec(readme);
+    assert.ok(match, 'README must contain a repository structure tree block');
+    const lines = match[1].split(/\r?\n/);
+
+    const dirStack = [''];
+    let checked = 0;
+    for (const line of lines) {
+      const m = /^([|\s]*?)(?:\|--|`--)\s+([a-zA-Z0-9_.-]+(?:\/)?)/.exec(line);
+      if (!m) continue;
+      const prefix = m[1];
+      const item = m[2];
+      const depth = Math.round(prefix.length / 4) + 1;
+      dirStack.length = depth;
+      const cleanPath = (dirStack.slice(1).join('') + item).replace(/\/+/g, '/');
+      if (item.endsWith('/')) {
+        dirStack[depth] = item;
+      }
+      const resolved = path.resolve(ROOT, cleanPath);
+      assert.ok(existsSync(resolved), `Path in README tree does not exist on disk: ${cleanPath}`);
+      checked += 1;
+    }
+    assert.ok(checked >= 40, `Expected at least 40 files in tree, found ${checked}`);
+  });
 });

@@ -9,7 +9,7 @@ import {
 } from '../../src/ai/geminiClient.js';
 
 const SECRET = 'AIza-test-secret-value';
-const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
 
 const ok = (text) => ({ ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text }] } }] }) });
 const fail = (status, message = 'Something failed', headers = {}) => ({
@@ -75,7 +75,7 @@ describe('createGeminiClient basics', () => {
 
   it('only turns thinking off for models that allow it', async () => {
     const net = network(() => ok('x'));
-    await clientWith(net, { models: ['gemini-2.0-flash', 'gemini-2.5-pro'] }).complete(request);
+    await clientWith(net, { models: ['gemini-3.5-flash-lite', 'gemini-2.5-pro'] }).complete(request);
     assert.equal(JSON.parse(net.calls[0].options.body).generationConfig.thinkingConfig, undefined);
   });
 
@@ -116,13 +116,13 @@ describe('model failover', () => {
   }
 
   it('keeps going down the list until a model answers', async () => {
-    const net = network({ 'gemini-2.5-flash': fail(429), 'gemini-2.5-flash-lite': fail(503), 'gemini-2.0-flash': ok('last one') });
-    assert.deepEqual(await clientWith(net).complete(request), { text: 'last one', model: 'gemini-2.0-flash' });
+    const net = network({ 'gemini-2.5-flash': fail(429), 'gemini-2.5-flash-lite': fail(503), 'gemini-2.5-pro': ok('last one') });
+    assert.deepEqual(await clientWith(net).complete(request), { text: 'last one', model: 'gemini-2.5-pro' });
   });
 
   it('skips an exhausted model on later requests and tries it again after the cooldown', async () => {
     let clock = 0;
-    const net = network({ 'gemini-2.5-flash': fail(429), 'gemini-2.5-flash-lite': ok('lite'), 'gemini-2.0-flash': ok('older') });
+    const net = network({ 'gemini-2.5-flash': fail(429), 'gemini-2.5-flash-lite': ok('lite'), 'gemini-2.5-pro': ok('older') });
     const client = clientWith(net, { now: () => clock });
 
     await client.complete(request);
@@ -163,13 +163,13 @@ describe('model failover', () => {
 
   it('tries models even when all of them are cooling down, soonest to recover first', async () => {
     let clock = 0;
-    const net = network({ 'gemini-2.5-flash': fail(404), 'gemini-2.5-flash-lite': fail(429), 'gemini-2.0-flash': fail(503) });
+    const net = network({ 'gemini-2.5-flash': fail(404), 'gemini-2.5-flash-lite': fail(429), 'gemini-2.5-pro': fail(503) });
     const client = clientWith(net, { now: () => clock });
     await assert.rejects(client.complete(request), AiUnavailableError);
 
     net.calls.length = 0;
     await assert.rejects(client.complete(request), AiUnavailableError);
-    assert.deepEqual(net.models(), ['gemini-2.0-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']);
+    assert.deepEqual(net.models(), ['gemini-2.5-pro', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']);
   });
 
   it('gives up with one error when every model fails, and logs each skip without secrets', async () => {

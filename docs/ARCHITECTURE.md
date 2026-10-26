@@ -58,7 +58,7 @@ Event content lives in `src/planner/data/*.js` as plain objects. A test checks t
 
 ## Print and download
 
-`planReport.js` turns a plan and its progress into one plain description. `printSheet.js` draws it as the printed document (shown only when printing, styled by `print.css`) and `exportText.js` writes it as a text file, so both always contain the same information. `printing.js` rebuilds the print sheet just before the browser prints.
+`planReport.js` turns a plan and its progress into one plain description. `printSheet.js` draws it as the printed document (shown only when printing, styled by `print.css`), `exportText.js` formats it as a plain-text document, and `download.js` triggers the browser download. `printing.js` rebuilds the print sheet just before the browser prints.
 
 ## Chat assistant
 

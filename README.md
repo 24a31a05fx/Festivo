@@ -9,9 +9,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-8e4934.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-29231f.svg)](package.json)
 [![Dependencies: 0](https://img.shields.io/badge/Dependencies-0-3e523f.svg)](package.json)
-[![Tests](https://img.shields.io/badge/Tests-632%20passing-236938.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-635%20passing-236938.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/Line%20Coverage-100%25-236938.svg)](tests/)
-[![Accessibility](https://img.shields.io/badge/WCAG%202.1-AA%20Compliant-8e4934.svg)](docs/ACCESSIBILITY.md)
+[![Accessibility](https://img.shields.io/badge/WCAG%202.1-AA%20Tested-8e4934.svg)](docs/ACCESSIBILITY.md)
 
 <br />
 
@@ -52,8 +52,8 @@ Organizing a milestone celebration demands juggling finances, strict calendar de
 
 1. **Target Audience**: Couples planning weddings, families and individuals coordinating milestone birthdays, and community organizers hosting festivals, cleanups, or charity galas.
 2. **Deterministic Foundations**: The core budget engine, countdown timeline generator, and vendor checklists execute with 100% predictable, zero-dependency pure functions.
-3. **Dual-Engine Intelligence**: An optional Google Gemini AI assistant enriches the plan with tailored suggestions, conversational answers, and creative recommendations, while an offline deterministic fallback guarantees that every feature remains fully operational without internet access or API credentials.
-4. **Privacy-First Architecture**: Plans remain entirely in the user's browser via standard web storage. The server never persists user event data to disks, databases, or logs.
+3. **Dual-Engine Intelligence**: An optional Google Gemini AI assistant enriches the plan with tailored suggestions, conversational answers, and creative recommendations. When running without an API key or when external AI services are unreachable, the server's built-in rule engine operates seamlessly offline from third-party services.
+4. **Privacy-First Architecture**: Plans remain entirely in the user's browser via standard web storage (`localStorage`). While event parameters are transmitted over HTTP to the application server to compute allocations, the server is completely stateless and never persists user event data to disks, databases, or logs.
 
 ### Supported Event Types
 
@@ -74,7 +74,7 @@ Organizing a milestone celebration demands juggling finances, strict calendar de
 - **Categorized Vendor Checklists**: Recommends booking deadlines in order of lead time, providing standard milestone checkboxes and specific interview questions to ask prospective vendors.
 - **Keyword-Ranked Event Ideas**: Curates and scores creative themes, activities, and touches based on matching theme keywords, interests, guest scale, and budget tiers.
 - **Floating AI Chat Assistant**: Persistent conversational assistant accessible on every page, providing contextual advice grounded in the user's saved event plan.
-- **Dual-Engine Model Cascading**: Automatically attempts configured Gemini models in priority sequence (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.0-flash`, `gemini-2.0-flash-lite`, `gemini-2.5-pro`) and falls back seamlessly to the built-in rule engine if quotas or connectivity fail.
+- **Dual-Engine Model Cascading**: Automatically attempts configured Gemini models in priority sequence (`gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`) and falls back seamlessly to the built-in rule engine if quotas or connectivity fail.
 - **Browser-Local Persistence**: Saves event plans to `localStorage` (`celebration-planner:v1`) and active chat history to `sessionStorage` (`celebration-planner:chat:v1`) without requiring an account.
 - **Dedicated Print Stylesheet**: Includes an `@media print` layout rendering A4-optimized checklists, budget tables, and banner summaries with WCAG AA print contrast.
 - **Plain-Text Plan Export**: Formats the complete plan as an accessible, structured text file ready to copy, share, or archive offline.
@@ -189,7 +189,7 @@ Festivo is engineered with zero external dependencies, leveraging native modern 
 |                          v                                                      |
 |   +-------------------------------------------------------------------------+   |
 |   |                         API Router & Controllers                        |   |
-|   |              /api/health, /api/meta, /api/plan, /api/chat, /api/ideas   |   |
+|   |        /api/health, /api/meta, /api/plan, /api/ideas, /api/ask, /api/chat       |   |
 |   +-------------------------------------+-----------------------------------+   |
 |                                         |                                       |
 |             +---------------------------+---------------------------+           |
@@ -250,7 +250,7 @@ For detailed architecture diagrams and component responsibilities, refer to [doc
 |   |   |-- clientAddress.js      # Client IP resolver with proxy forwarding support
 |   |   |-- errors.js             # Standardized HTTP error responses
 |   |   |-- hostGuard.js          # Host header and cross-origin protection
-|   |   |-- rateLimiter.js        # Sliding-window rate limiters (standard & AI)
+|   |   |-- rateLimiter.js        # Fixed-window rate limiters with memory bound (standard & AI)
 |   |   |-- router.js             # URL routing engine
 |   |   |-- security.js           # Security headers (CSP, HSTS, frame protection)
 |   |   `-- staticFiles.js        # In-memory static file cache with Brotli, Gzip, and ETags
@@ -297,6 +297,8 @@ For detailed architecture diagrams and component responsibilities, refer to [doc
 |       |-- resultsView.js        # Results container and view switching
 |       |-- planReport.js         # Canonical plan representation for export and printing
 |       |-- printSheet.js         # Printable sheet DOM builder
+|       |-- printing.js           # Dedicated print preview and layout coordinator
+|       |-- download.js           # Safe text plan file download trigger
 |       |-- exportText.js         # Plain-text format generator
 |       |-- chatbot.js            # Floating chat widget controller
 |       |-- chatMessages.js       # Chat message list renderer
@@ -319,7 +321,7 @@ For detailed architecture diagrams and component responsibilities, refer to [doc
 |           |-- ask.js            # Dedicated "Ask the Planner" question view
 |           `-- tabs.js           # Accessible ARIA tab strip controller
 |
-|-- tests/                        # Comprehensive test suite (632 tests across 117 suites)
+|-- tests/                        # Comprehensive test suite (635 tests across 117 suites)
 |   |-- planner/                  # Budget, dates, ideas, timeline, and validation tests
 |   |-- ai/                       # Gemini client, caching, and prompt tests
 |   |-- http/                     # Security headers, compression, rate limiter, host guard tests
@@ -393,7 +395,7 @@ cp .env.example .env
 | Variable Name | Default Value | Description |
 | :--- | :--- | :--- |
 | `GEMINI_API_KEY` | *(None)* | Google Gemini API key. When present, enables generative event ideas and contextual chat. When absent, the built-in rule engine operates seamlessly. |
-| `GEMINI_MODELS` | `gemini-2.5-flash,gemini-2.5-flash-lite,gemini-2.0-flash,gemini-2.0-flash-lite,gemini-2.5-pro` | Comma-separated list of Gemini models attempted in failover priority order. |
+| `GEMINI_MODELS` | `gemini-3.8-flash,gemini-3.5-flash-lite,gemini-2.5-flash,gemini-2.5-flash-lite,gemini-2.5-pro` | Comma-separated list of Gemini models attempted in failover priority order. |
 | `PORT` | `3000` | Port on which the local HTTP server listens. |
 | `HOST` | `127.0.0.1` | Network interface to bind. Defaults to loopback for security. Set to `0.0.0.0` for containerized environments. |
 | `ALLOWED_HOSTS` | `localhost,127.0.0.1,[::1]` | Comma-separated allowed Host header values. Rejects requests with mismatched Host headers with HTTP 403. |
@@ -401,7 +403,7 @@ cp .env.example .env
 | `AI_TIMEOUT_MS` | `20000` (Local) / `8000` (Vercel) | Maximum execution duration before timing out an individual Gemini API call. |
 | `RATE_LIMIT_MAX` | `120` | Maximum general API requests allowed per client IP per minute. |
 | `AI_RATE_LIMIT_MAX` | `20` | Maximum AI-specific API requests allowed per client IP per minute. |
-| `RATE_LIMIT_WINDOW_MS` | `60000` | Sliding rate limit window duration in milliseconds (1 minute). |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Fixed rate limit window duration in milliseconds (1 minute). |
 | `MAX_BODY_BYTES` | `32768` (32 KiB) | Maximum JSON request body size in bytes accepted by the server. |
 
 > **Security Note**: Never commit `.env` files or API keys to version control. The `.env` file is strictly ignored in `.gitignore` and `.vercelignore`.
@@ -415,7 +417,7 @@ All development tasks are defined in `package.json` scripts:
 ```bash
 npm start         # Starts the production HTTP server on http://127.0.0.1:3000
 npm run dev       # Starts the server in watch mode (restarts on file changes)
-npm test          # Runs all 632 automated unit, integration, and quality tests
+npm test          # Runs all 635 automated unit, integration, and quality tests
 npm run lint      # Runs the dependency-free static analysis linter
 npm run coverage  # Executes tests with line, branch, and function coverage enforcement
 npm run check     # Executes linting, server syntax check, and the full test suite
@@ -429,11 +431,11 @@ Executed on the current verified codebase:
 | :--- | :--- | :--- | :--- |
 | **Planner Domain Logic** | `tests/planner/*.test.js` | 109 | Passed |
 | **Gemini AI & Fallback Service** | `tests/ai/*.test.js` | 72 | Passed |
-| **HTTP Transport & Security** | `tests/http/*.test.js` | 58 | Passed |
+| **HTTP Transport & Security** | `tests/http/*.test.js` | 60 | Passed |
 | **Server & Vercel Integration** | `tests/*.test.js` | 61 | Passed |
 | **Client UI, Views & Chatbot** | `tests/client/*.test.js` | 171 | Passed |
-| **Quality, Contrast & Hygiene** | `tests/quality/*.test.js` | 161 | Passed |
-| **Total Automated Tests** | | **632 passed** | **0 failed, 0 skipped, 0 todo** |
+| **Quality, Contrast & Hygiene** | `tests/quality/*.test.js` | 162 | Passed |
+| **Total Automated Tests** | | **635 passed** | **0 failed, 0 skipped, 0 todo** |
 
 ### Code Coverage Metrics
 
@@ -461,12 +463,14 @@ Enforced with automated thresholds (`line >= 95%`, `branch >= 90%`, `function >=
 - **Clickjacking Protection**: Enforces `X-Frame-Options: DENY` and `frame-ancestors 'none'`.
 - **MIME Sniffing Prevention**: Enforces `X-Content-Type-Options: nosniff`.
 - **Origin & Host Guard**: Validates request `Host` and `Origin` headers to protect against DNS rebinding and cross-site request forgery.
-- **Sliding-Window Rate Limiting**: Independent IP-based rate limiters protect static and AI routes against brute-force and resource exhaustion.
+- **Fixed-Window Rate Limiting**: Independent IP-based rate limiters protect static and AI routes against brute-force and resource exhaustion with bounded in-memory capacity.
 - **Zero Third-Party Dependencies**: Complete elimination of software supply-chain vulnerabilities, compromised nested packages, and npm audit advisories.
 
 For in-depth vulnerability handling and threat models, see [docs/SECURITY.md](docs/SECURITY.md).
 
-### Accessibility (WCAG 2.1 AA)
+### Accessibility (WCAG 2.1 AA Testing)
+
+Festivo is built to target WCAG 2.1 Level AA conformance. Automated quality tests in `tests/quality/` verify objective rules, while comprehensive manual testing procedures are documented in [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md):
 
 - **Semantic Landmarks**: Strict HTML5 structure (`<header>`, `<main id="main">`, `<nav>`, `<section>`, `<footer>`).
 - **Keyboard Navigation**: 100% of interactive controls are focusable with visible keyboard focus indicators (`:focus-visible { outline: 3px solid var(--focus) }`).
@@ -476,7 +480,7 @@ For in-depth vulnerability handling and threat models, see [docs/SECURITY.md](do
 - **Reduced Motion Support**: Honored via `@media (prefers-reduced-motion: reduce)`, disabling animations and particle effects.
 - **Contrast Ratios**: Verified text contrast >= 4.5:1 and UI component borders >= 3.0:1 across both light and dark themes.
 
-For the detailed accessibility audit checklist, see [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
+For the detailed accessibility audit checklist and manual assistive testing guide, see [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
 
 ---
 

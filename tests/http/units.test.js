@@ -56,6 +56,27 @@ describe('rate limiter', () => {
     limiter.check('fresh');
     assert.equal(limiter.size, 1);
   });
+
+  it('exhibits fixed-window boundary-burst semantics across reset thresholds', () => {
+    let clock = 0;
+    const limiter = createRateLimiter({ windowMs: 1000, max: 2, now: () => clock });
+    assert.equal(limiter.check('client-burst').allowed, true);
+    clock = 990;
+    assert.equal(limiter.check('client-burst').allowed, true);
+    assert.equal(limiter.check('client-burst').allowed, false);
+
+    clock = 1000;
+    assert.equal(limiter.check('client-burst').allowed, true);
+    assert.equal(limiter.check('client-burst').allowed, true);
+    assert.equal(limiter.check('client-burst').allowed, false);
+  });
+
+  it('caps table size under high cardinality to avoid memory exhaustion', () => {
+    let clock = 0;
+    const limiter = createRateLimiter({ windowMs: 10_000, max: 5, now: () => clock });
+    for (let n = 0; n < 10_050; n += 1) limiter.check(`ip-${n}`);
+    assert.ok(limiter.size <= 10_000, `size ${limiter.size} exceeds MAX_ENTRIES ceiling`);
+  });
 });
 
 describe('readJsonBody', () => {
