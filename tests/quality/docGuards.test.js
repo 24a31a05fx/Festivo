@@ -46,17 +46,51 @@ describe('documentation consistency guards', () => {
     }
   });
 
-  it('ensures all referenced local markdown files and existing assets exist', () => {
-    const readme = read('README.md');
-    const localLinks = [...readme.matchAll(/\[[^\]]+\]\((docs\/[A-Za-z0-9_/.-]+\.md|LICENSE|CONTRIBUTING\.md|SECURITY\.md)\)/g)].map((m) => m[1]);
-    for (const relPath of localLinks) {
-      assert.ok(existsSync(path.join(ROOT, relPath)), `Dead link in README.md: ${relPath}`);
-    }
+  it('ensures all referenced local markdown files, anchors, and existing assets exist', () => {
+    const mdFiles = [
+      'README.md',
+      'CONTRIBUTING.md',
+      'SECURITY.md',
+      'docs/ARCHITECTURE.md',
+      'docs/SECURITY.md',
+      'docs/ACCESSIBILITY.md',
+      'docs/DEPLOYMENT.md',
+      'docs/TESTING.md',
+      'docs/screenshots/README.md',
+    ];
 
-    const imageLinks = [...readme.matchAll(/<img[^>]+src="([^">]+)"/g)].map((m) => m[1]);
-    for (const src of imageLinks) {
-      if (!src.startsWith('http')) {
-        assert.ok(existsSync(path.join(ROOT, src)), `Missing image asset: ${src}`);
+    for (const docFile of mdFiles) {
+      const fullDocPath = path.join(ROOT, docFile);
+      const docDir = path.dirname(fullDocPath);
+      const content = read(docFile);
+
+      if (docFile === 'README.md') {
+        const headings = [...content.matchAll(/^#+\s+(.+)$/gm)].map((m) => m[1]);
+        const githubSlug = (h) => h.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s/g, '-');
+        const headingSlugs = new Set(headings.map(githubSlug));
+        for (const match of content.matchAll(/\[[^\]]+\]\(#([^)]+)\)/g)) {
+          const anchor = match[1];
+          assert.ok(headingSlugs.has(anchor), `Unmatched anchor in ${docFile}: #${anchor}`);
+        }
+      }
+
+      for (const match of content.matchAll(/\[([^\]]*)\]\(([^)]+)\)/g)) {
+        const rawTarget = match[2].trim();
+        if (/^(?:https?:|mailto:|#)/.test(rawTarget)) continue;
+
+        const targetPath = decodeURIComponent(rawTarget.split('#')[0].trim());
+        if (!targetPath) continue;
+
+        const resolved = path.isAbsolute(targetPath) ? targetPath : path.resolve(docDir, targetPath);
+        assert.ok(existsSync(resolved), `Dead link in ${docFile}: ${rawTarget}`);
+      }
+
+      for (const match of content.matchAll(/<img[^>]+src="([^">]+)"/g)) {
+        const rawSrc = match[1].trim();
+        if (/^https?:/.test(rawSrc)) continue;
+        const assetPath = decodeURIComponent(rawSrc.split('#')[0].trim());
+        const resolved = path.resolve(ROOT, assetPath);
+        assert.ok(existsSync(resolved), `Missing image asset in ${docFile}: ${rawSrc}`);
       }
     }
   });
