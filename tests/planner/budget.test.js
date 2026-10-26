@@ -83,4 +83,16 @@ describe('buildBudget', () => {
     assert.deepEqual(budget.lines.map((line) => line.key), EVENT_TYPES.community.budget.map((line) => line.key));
     assert.ok(budget.lines.every((line) => line.label && line.hint));
   });
+
+  it('handles a definition without a contingency reserve without throwing', () => {
+    const noReserveDef = {
+      ...EVENT_TYPES.wedding,
+      contingencyKey: 'contingency',
+      budget: EVENT_TYPES.wedding.budget.filter((line) => line.key !== 'contingency'),
+    };
+    const budget = buildBudget(noReserveDef, validInput({ totalBudget: 100_000, priorities: [] }));
+    assert.equal(budget.total, 100_000);
+    assert.equal(sum(budget.lines.map((l) => l.amount)), 100_000);
+    assert.equal(budget.lines.find((l) => l.key === 'contingency'), undefined);
+  });
 });

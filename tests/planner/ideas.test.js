@@ -35,10 +35,20 @@ describe('budgetTier', () => {
     assert.equal(budgetTier(definition, input(10_000, 'INR')), 'essential');
     assert.equal(budgetTier(definition, input(10_000, 'GBP')), 'premium');
   });
+
+  it('rejects unsupported currencies with a RangeError instead of guessing an exchange rate', () => {
+    assert.throws(() => budgetTier(definition, { totalBudget: 1000, guestCount: 10, currency: 'XYZ' }), RangeError);
+    assert.throws(() => budgetTier(definition, { totalBudget: 1000, guestCount: 10, currency: undefined }), RangeError);
+  });
 });
 
 describe('selectIdeas', () => {
   const definition = EVENT_TYPES.wedding;
+
+  it('does not produce an "undefined" keyword when theme or interests are missing', () => {
+    const ideas = selectIdeas(definition, validInput({ theme: undefined, interests: undefined }));
+    assert.ok(ideas.every((idea) => !idea.matchedOn.includes('undefined')));
+  });
 
   it('returns the requested number of distinct ideas', () => {
     const ideas = selectIdeas(definition, validInput(), 8);

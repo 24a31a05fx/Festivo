@@ -31,12 +31,12 @@ export function buildBudget(definition, input) {
   const spendable = budget.filter((line) => line.key !== contingencyKey);
   const priorities = new Set(input.priorities);
 
-  const reserveAmount = Math.round((input.totalBudget * reserve.percent) / 100);
+  const reserveAmount = reserve ? Math.round((input.totalBudget * reserve.percent) / 100) : 0;
   const weights = spendable.map((line) => line.percent * (priorities.has(line.key) ? PRIORITY_BOOST : 1));
   const spendableAmounts = allocate(input.totalBudget - reserveAmount, weights);
 
   const amounts = new Map(spendable.map((line, index) => [line.key, spendableAmounts[index]]));
-  amounts.set(contingencyKey, reserveAmount);
+  if (reserve) amounts.set(contingencyKey, reserveAmount);
 
   const lines = budget.map((line) => ({
     key: line.key,

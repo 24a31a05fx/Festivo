@@ -88,6 +88,7 @@ function clean(value, maxLength) {
 // Accepts a JSON array, optionally wrapped in a code fence or surrounding text,
 // and keeps only well-formed entries.
 export function parseIdeasResponse(text) {
+  if (typeof text !== 'string') return [];
   const start = text.indexOf('[');
   const end = text.lastIndexOf(']');
   if (start === -1 || end <= start) return [];
@@ -131,5 +132,6 @@ export function sanitizeHistory(history) {
 }
 
 export function cleanAnswer(text) {
+  if (typeof text !== 'string') return '';
   return text.replace(/\s+\n/g, '\n').trim().slice(0, MAX_ANSWER_LENGTH);
 }

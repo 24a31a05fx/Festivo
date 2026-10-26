@@ -13,6 +13,7 @@ import {
   sanitizeHistory,
 } from './prompts.js';
 import { createTtlCache } from './cache.js';
+import { silentLogger } from '../logger.js';
 
 const IDEAS_MAX_TOKENS = 1200;
 const ANSWER_MAX_TOKENS = 600;
@@ -22,7 +23,7 @@ const CACHE_TTL_MS = 10 * 60 * 1000;
 // Combines the Gemini client with the built-in planner. Every method returns a
 // usable result: when no model can answer, or an answer is unusable, the
 // built-in planner answers instead and `source` says which one did.
-export function createAssistantService({ aiClient, logger, now = Date.now }) {
+export function createAssistantService({ aiClient, logger = silentLogger, now = Date.now }) {
   const ideasCache = createTtlCache({ maxEntries: CACHE_MAX_ENTRIES, ttlMs: CACHE_TTL_MS, now });
 
   async function tryAi(request) {
@@ -30,7 +31,7 @@ export function createAssistantService({ aiClient, logger, now = Date.now }) {
     try {
       return await aiClient.complete(request);
     } catch (error) {
-      logger.warn('ai_request_failed', { reason: error.message });
+      logger?.warn?.('ai_request_failed', { reason: error.message });
       return null;
     }
   }
