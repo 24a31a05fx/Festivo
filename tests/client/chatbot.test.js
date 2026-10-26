@@ -117,6 +117,8 @@ describe('chat store', () => {
   });
 
   it('finds session storage only when it is available', () => {
+    const original = globalThis.sessionStorage;
+    delete globalThis.sessionStorage;
     assert.equal(sessionStorageOrNull(), null);
     globalThis.sessionStorage = memoryStorage();
     assert.ok(sessionStorageOrNull());
@@ -124,6 +126,7 @@ describe('chat store', () => {
     Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, get() { throw new Error('blocked'); } });
     assert.equal(sessionStorageOrNull(), null);
     delete globalThis.sessionStorage;
+    if (original !== undefined) globalThis.sessionStorage = original;
   });
 });
 
