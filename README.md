@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-8e4934.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-29231f.svg)](package.json)
 [![Dependencies: 0](https://img.shields.io/badge/Dependencies-0-3e523f.svg)](package.json)
-[![Tests](https://img.shields.io/badge/Tests-628%20passing-236938.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-632%20passing-236938.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/Line%20Coverage-100%25-236938.svg)](tests/)
 [![Accessibility](https://img.shields.io/badge/WCAG%202.1-AA%20Compliant-8e4934.svg)](docs/ACCESSIBILITY.md)
 
@@ -57,9 +57,9 @@ Organizing a milestone celebration demands juggling finances, strict calendar de
 
 ### Supported Event Types
 
-- **Weddings (`wedding`)**: Specialized budget distribution across 9 categories (venue and rentals, catering and bar, photography and video, attire and beauty, floral and decor, music and entertainment, invitations and paper, favors and gifts, and contingency reserve) with 22 lead-time-dated tasks.
-- **Birthdays (`birthday`)**: Tailored distribution across 9 categories (venue and setup, catering and refreshments, celebration cake, entertainment and activities, decorations and balloons, invitations and party favors, event photography, host gifts, and contingency reserve) with milestone task pacing.
-- **Community Events (`community`)**: Civic and neighborhood distribution across 9 categories (venue and public permits, refreshments, sound and staging, marketing and outreach, volunteer and safety supplies, interactive activities, wayfinding signage, waste and cleanup, and contingency reserve) with regulatory milestones.
+- **Weddings (`wedding`)**: Specialized budget distribution across 9 categories (Venue and rentals 22%, Food and beverage 28%, Photography and video 10%, Decor and flowers 10%, Music and entertainment 7%, Attire and beauty 8%, Invitations and stationery 2%, Transport and stay 3%, and Contingency reserve 10%) with 22 lead-time-dated tasks.
+- **Birthdays (`birthday`)**: Tailored distribution across 9 categories (Venue and rentals 18%, Food and drinks 30%, Cake and desserts 8%, Decor and theme 12%, Entertainment and games 14%, Photography 5%, Invitations 3%, Party favours and gifts 5%, and Contingency reserve 5%) with 15 milestone tasks.
+- **Community Events (`community`)**: Civic and neighborhood distribution across 9 categories (Venue and site 15%, Food and refreshments 25%, Sound, lighting and staging 15%, Promotion and outreach 10%, Permits and insurance 8%, Volunteer support 5%, Programme and entertainment 10%, Safety and accessibility 4%, and Contingency reserve 8%) with 16 regulatory and logistical milestone tasks.
 
 ---
 
@@ -67,7 +67,7 @@ Organizing a milestone celebration demands juggling finances, strict calendar de
 
 - **Multi-Event Planning Engine**: Pre-calibrated planning profiles for weddings, birthdays, and community gatherings, adapting automatically to guest counts and budget thresholds.
 - **Dynamic Category Budgeting**: Splits any budget into exact integer currency units that add up to the entered total without rounding errors or lost pennies.
-- **Contingency Reserve Protection**: Deducts a protected reserve (up to 15%) off the top to absorb unexpected expenses before allocating category shares.
+- **Contingency Reserve Protection**: Automatically reserves a dedicated safety margin (10% for weddings, 5% for birthdays, 8% for community events) off the top to absorb unexpected expenses before allocating category shares.
 - **Priority-Weighted Allocation**: Allows up to three custom priorities (e.g., Photography, Catering, Music) to receive boosted allocations while maintaining strict total budget bounds.
 - **Category Spending Tracker**: Tracks actual vendor spend per line item, computes remaining funds, and displays plain-text warnings when categories exceed their allocated budget.
 - **Lead-Time Compressed Timelines**: Tasks count backward from the target event date and compress gracefully when lead times are shorter than standard industry guidelines.
@@ -94,13 +94,15 @@ Festivo features an **Editorial Luxury** aesthetic designed for clarity, visual 
 
 The repository includes a dedicated asset structure in `docs/screenshots/` for capturing further interface views:
 
-| Screenshot Asset | Target View | Content Description |
-| :--- | :--- | :--- |
-| `docs/screenshots/Home.png` | Landing Page | Hero banner, value propositions, steps grid, features, and FAQ. |
-| `docs/screenshots/plan-form.png` | Event Form | Stepper, event selector tiles, date picker, budget, and priority toggles. |
-| `docs/screenshots/plan-results.png` | Planning Dashboard | Summary metrics, budget table, progress bars, timeline, and vendor accordion. |
-| `docs/screenshots/chat.png` | AI Assistant | Floating action launcher and active editorial conversation drawer. |
-| `docs/screenshots/print.png` | Print Preview | Dedicated print sheet with banner, budget summary, and task checklists. |
+| Screenshot Asset | Target View | Content Description | Repository Status |
+| :--- | :--- | :--- | :--- |
+| `docs/screenshots/Home.png` | Landing Page | Hero banner, value propositions, steps grid, features, and FAQ. | Present (Committed) |
+| `docs/screenshots/plan-form.png` | Event Form | Stepper, event selector tiles, date picker, budget, and priority toggles. | Planned capture slot |
+| `docs/screenshots/plan-results.png` | Planning Dashboard | Summary metrics, budget table, progress bars, timeline, and vendor accordion. | Planned capture slot |
+| `docs/screenshots/chat.png` | AI Assistant | Floating action launcher and active editorial conversation drawer. | Planned capture slot |
+| `docs/screenshots/print.png` | Print Preview | Dedicated print sheet with banner, budget summary, and task checklists. | Planned capture slot |
+
+*Note: In accordance with `docs/screenshots/README.md`, `Home.png` is committed in the repository. The remaining paths represent standardized capture slots reserved for additional screenshots.*
 
 ---
 
@@ -317,7 +319,7 @@ For detailed architecture diagrams and component responsibilities, refer to [doc
 |           |-- ask.js            # Dedicated "Ask the Planner" question view
 |           `-- tabs.js           # Accessible ARIA tab strip controller
 |
-|-- tests/                        # Comprehensive test suite (628 tests across 116 suites)
+|-- tests/                        # Comprehensive test suite (632 tests across 117 suites)
 |   |-- planner/                  # Budget, dates, ideas, timeline, and validation tests
 |   |-- ai/                       # Gemini client, caching, and prompt tests
 |   |-- http/                     # Security headers, compression, rate limiter, host guard tests
@@ -399,6 +401,8 @@ cp .env.example .env
 | `AI_TIMEOUT_MS` | `20000` (Local) / `8000` (Vercel) | Maximum execution duration before timing out an individual Gemini API call. |
 | `RATE_LIMIT_MAX` | `120` | Maximum general API requests allowed per client IP per minute. |
 | `AI_RATE_LIMIT_MAX` | `20` | Maximum AI-specific API requests allowed per client IP per minute. |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Sliding rate limit window duration in milliseconds (1 minute). |
+| `MAX_BODY_BYTES` | `32768` (32 KiB) | Maximum JSON request body size in bytes accepted by the server. |
 
 > **Security Note**: Never commit `.env` files or API keys to version control. The `.env` file is strictly ignored in `.gitignore` and `.vercelignore`.
 
@@ -411,7 +415,7 @@ All development tasks are defined in `package.json` scripts:
 ```bash
 npm start         # Starts the production HTTP server on http://127.0.0.1:3000
 npm run dev       # Starts the server in watch mode (restarts on file changes)
-npm test          # Runs all 628 automated unit, integration, and quality tests
+npm test          # Runs all 632 automated unit, integration, and quality tests
 npm run lint      # Runs the dependency-free static analysis linter
 npm run coverage  # Executes tests with line, branch, and function coverage enforcement
 npm run check     # Executes linting, server syntax check, and the full test suite
@@ -419,7 +423,7 @@ npm run check     # Executes linting, server syntax check, and the full test sui
 
 ### Verified Test Results
 
-Executed on the current release (`7e5a003`):
+Executed on the current verified codebase:
 
 | Test Area | Target Directory | Tests Passed | Status |
 | :--- | :--- | :--- | :--- |
@@ -428,8 +432,8 @@ Executed on the current release (`7e5a003`):
 | **HTTP Transport & Security** | `tests/http/*.test.js` | 58 | Passed |
 | **Server & Vercel Integration** | `tests/*.test.js` | 61 | Passed |
 | **Client UI, Views & Chatbot** | `tests/client/*.test.js` | 171 | Passed |
-| **Quality, Contrast & Hygiene** | `tests/quality/*.test.js` | 157 | Passed |
-| **Total Automated Tests** | | **628 passed** | **0 failed, 0 skipped, 0 todo** |
+| **Quality, Contrast & Hygiene** | `tests/quality/*.test.js` | 161 | Passed |
+| **Total Automated Tests** | | **632 passed** | **0 failed, 0 skipped, 0 todo** |
 
 ### Code Coverage Metrics
 
@@ -537,7 +541,7 @@ Festivo was developed to meet and exceed the six evaluation criteria of the **Ce
 | **1. Code Quality** | Modular, single-responsibility architecture. Zero source files exceed 200 lines (excluding static content in `/data/`). Pure domain logic is decoupled from transport and rendering. Dependency-free custom linter (`scripts/lint.js`). | `src/`, `public/js/`, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | **2. Security** | Zero runtime dependencies. Strict Content Security Policy (`default-src 'none'`). Host header validation, IP rate limiting, input schema validation, and zero `innerHTML` rendering. Secrets are strictly server-side. | `src/http/`, [docs/SECURITY.md](docs/SECURITY.md) |
 | **3. Efficiency** | In-memory static asset serving with Brotli and Gzip compression. ETag conditional validation. Zero build overhead. Sub-millisecond planning calculations. In-memory AI caching. | `src/http/staticFiles.js`, `src/ai/cache.js` |
-| **4. Testing** | 628 automated tests across 116 test suites. 100.00% line coverage, 100.00% function coverage, and 99.46% branch coverage with zero uncovered lines. Full live HTTP and E2E integration test suite. | `tests/`, [docs/TESTING.md](docs/TESTING.md) |
+| **4. Testing** | 632 automated tests across 117 test suites. 100.00% line coverage, 100.00% function coverage, and 99.46% branch coverage with zero uncovered lines. Full live HTTP and E2E integration test suite. | `tests/`, [docs/TESTING.md](docs/TESTING.md) |
 | **5. Accessibility** | Full WCAG 2.1 AA compliance. 63 verified automated color contrast test pairs. Keyboard navigation with skip links. Relative font units only (`rem`/`em`). Reduced-motion and forced-colors support. | `public/css/styles.css`, [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) |
 | **6. Problem Statement Alignment** | Native support for Weddings, Birthdays, and Community events. Exact integer budgeting, priority weighting, contingency reserve, dated timelines with lead-time compression, vendor checklists, and dual-engine AI. | `src/planner/`, `public/plan.html` |
 

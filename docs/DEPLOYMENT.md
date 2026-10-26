@@ -28,6 +28,8 @@ Set these in the same place. All have sensible defaults.
 | `AI_TIMEOUT_MS` | `8000` | Time limit for each model. Two attempts must fit inside the function limit |
 | `RATE_LIMIT_MAX` | `120` | API requests per visitor per minute |
 | `AI_RATE_LIMIT_MAX` | `20` | AI requests per visitor per minute |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Window for visitor rate limits (1 minute) |
+| `MAX_BODY_BYTES` | `32768` | Maximum JSON request body size (32 KiB) |
 | `ALLOWED_HOSTS` | any | Restrict the host names the API answers to, for example your own domain |
 
 ## How it differs from running it locally
