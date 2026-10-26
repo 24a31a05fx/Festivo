@@ -159,7 +159,7 @@ describe('API', () => {
     assert.ok(meta.currencies.some((currency) => currency.code === 'INR'));
     assert.equal(meta.maxPriorities, 3);
     assert.equal(meta.aiEnabled, false);
-    assert.ok(meta.limits.nameMax > 0 && meta.limits.questionMax > 0);
+    assert.ok(meta.limits.nameMax > 0 && meta.limits.questionMax > 0 && meta.limits.budgetMax === 1_000_000_000);
   });
 
   it('creates a plan for valid input', async () => {

@@ -15,7 +15,11 @@ export function createVendorsView({ plan, progress, locale, onToggleStep }) {
     }
 
     const steps = vendor.checklist.map((step) => {
-      const checkbox = h('input', { type: 'checkbox', checked: current.steps[step.id] === true });
+      const checkbox = h('input', {
+        type: 'checkbox',
+        checked: current.steps[step.id] === true,
+        'aria-label': `${vendor.label}: ${step.text}`,
+      });
       checkbox.addEventListener('change', () => {
         const updated = { ...current.steps };
         if (checkbox.checked) updated[step.id] = true;

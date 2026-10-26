@@ -154,7 +154,10 @@ describe('chat messages', () => {
 
   it('offers suggestions and a typing indicator that is announced in words', () => {
     const picked = [];
-    const chips = byClass(suggestionsNode((text) => picked.push(text)), 'chat-chip');
+    const node = suggestionsNode((text) => picked.push(text));
+    assert.equal(node.getAttribute('role'), 'group');
+    assert.equal(node.getAttribute('aria-label'), 'Suggested questions');
+    const chips = byClass(node, 'chat-chip');
     assert.deepEqual(chips.map((chip) => chip.textContent), [...SUGGESTIONS]);
     chips[1].dispatch('click');
     assert.deepEqual(picked, [SUGGESTIONS[1]]);
@@ -170,11 +173,13 @@ describe('chatbot widget', () => {
     const { fab, panel, el } = build();
     assert.equal(panel.hidden, true);
     assert.equal(fab.getAttribute('aria-expanded'), 'false');
+    assert.equal(fab.getAttribute('aria-haspopup'), 'dialog');
     assert.equal(fab.getAttribute('aria-controls'), 'chat-panel');
     assert.equal(byClass(fab, 'chat-fab-label')[0].textContent, 'Ask AI');
     assert.equal(byTag(fab, 'svg').length, 1, 'the launcher has a chatbot icon');
     assert.ok(el.classes.has('no-print'));
     assert.equal(panel.getAttribute('aria-labelledby'), 'chat-title');
+    assert.equal(panel.getAttribute('aria-modal'), 'false');
     assert.equal(byTag(el, 'h2')[0].getAttribute('id'), 'chat-title');
   });
 

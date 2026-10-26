@@ -37,7 +37,7 @@ export function messageNode(message) {
 export function suggestionsNode(onPick) {
   return h(
     'div',
-    { class: 'chat-suggestions' },
+    { class: 'chat-suggestions', role: 'group', 'aria-label': 'Suggested questions' },
     SUGGESTIONS.map((text) => h('button', { type: 'button', class: 'chat-chip', text, on: { click: () => onPick(text) } })),
   );
 }

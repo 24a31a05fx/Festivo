@@ -39,7 +39,12 @@ export function createIdeasView({ ideas, aiEnabled, onRequestAi }) {
     sourceNote.textContent = SOURCE_LABELS[next.source] ?? SOURCE_LABELS.builtin;
     list.replaceChildren(
       ...groupByCategory(next.items).map((group) =>
-        h('section', { class: 'idea-group' }, h('h4', { text: group.category }), h('ul', { class: 'idea-list' }, group.entries.map(ideaCard))),
+        h(
+          'section',
+          { class: 'idea-group', 'aria-label': group.category },
+          h('h4', { text: group.category }),
+          h('ul', { class: 'idea-list' }, group.entries.map(ideaCard)),
+        ),
       ),
     );
   }

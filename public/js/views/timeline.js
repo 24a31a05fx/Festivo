@@ -14,7 +14,7 @@ export function groupByPhase(tasks) {
 export function createTimelineView({ plan, progress, today, locale, onToggle }) {
   function createTask(task) {
     const done = progress.tasks[task.id] === true;
-    const status = h('span');
+    const status = h('span', { id: `status-${task.id}` });
     const item = h('li', { class: 'task' });
 
     function paint(isDone) {
@@ -24,7 +24,7 @@ export function createTimelineView({ plan, progress, today, locale, onToggle }) 
       item.classList.toggle('is-done', isDone);
     }
 
-    const checkbox = h('input', { type: 'checkbox', checked: done });
+    const checkbox = h('input', { type: 'checkbox', checked: done, 'aria-describedby': `status-${task.id}` });
     checkbox.addEventListener('change', () => {
       paint(checkbox.checked);
       onToggle(task.id, checkbox.checked);
@@ -46,7 +46,12 @@ export function createTimelineView({ plan, progress, today, locale, onToggle }) 
   }
 
   const groups = groupByPhase(plan.timeline.tasks).map((group) =>
-    h('section', { class: 'phase' }, h('h4', { text: group.phase }), h('ul', { class: 'task-list' }, group.tasks.map(createTask))),
+    h(
+      'section',
+      { class: 'phase', 'aria-label': group.phase },
+      h('h4', { text: group.phase }),
+      h('ul', { class: 'task-list' }, group.tasks.map(createTask)),
+    ),
   );
 
   const element = h(

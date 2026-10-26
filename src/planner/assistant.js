@@ -52,11 +52,13 @@ function answerBudget(plan) {
     .slice(0, MAX_LISTED)
     .map((line) => `${line.label} (${formatMoney(line.amount, budget.currency)})`);
   const reserve = budget.lines.find((line) => line.key === 'contingency');
+  const reserveNote = reserve
+    ? ` ${formatMoney(reserve.amount, budget.currency)} is held in reserve; avoid spending it until the final weeks.`
+    : '';
   return (
     `Your total budget is ${formatMoney(budget.total, budget.currency)}, which is about ` +
     `${formatMoney(summary.budgetPerGuest, budget.currency)} per guest for ${input.guestCount} guests. ` +
-    `The largest lines are ${top.join(', ')}. ` +
-    `${formatMoney(reserve.amount, budget.currency)} is held in reserve; avoid spending it until the final weeks.`
+    `The largest lines are ${top.join(', ')}.${reserveNote}`
   );
 }
 

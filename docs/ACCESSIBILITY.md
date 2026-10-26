@@ -15,7 +15,7 @@ The target is WCAG 2.1 level AA. This page lists what was done and how it is che
 - Every control has a visible, programmatically associated label. Required fields say "(required)" in text.
 - Related controls are grouped with `fieldset` and `legend`.
 - Hints are linked with `aria-describedby`.
-- Validation errors appear in a summary that receives focus, with links to each field, and next to each field with `aria-invalid` set. Messages say what is wrong and how to fix it.
+- Validation errors appear in an alert summary container (`role="alert"` and `aria-labelledby="error-summary-title"`) that receives focus, with links to each field, and next to each field with `aria-invalid` set. Messages say what is wrong and how to fix it.
 - Choosing priorities is limited to three; once the limit is reached the other options are disabled and the hint explains the limit.
 - Number and date inputs use native types with sensible `inputmode` values.
 
@@ -32,8 +32,8 @@ The target is WCAG 2.1 level AA. This page lists what was done and how it is che
 
 ## Chat assistant
 
-- The launcher is a real button with visible text ("Ask AI") plus an icon, `aria-expanded` and `aria-controls`.
-- The chat is a labelled, non-modal dialog. It opens with focus in the message box, closes with the close button or Escape, and returns focus to the launcher.
+- The launcher is a real button with visible text ("Ask AI") plus an icon, `aria-expanded`, `aria-haspopup="dialog"`, and `aria-controls`.
+- The chat is a labelled, non-modal dialog (`aria-modal="false"`). It opens with focus in the message box, closes with the close button or Escape, and returns focus to the launcher. Suggested prompt questions are grouped with `role="group"` and `aria-label="Suggested questions"`.
 - The conversation is a `role="log"` live region, so new replies are announced. The typing indicator has a text alternative and the animated dots are hidden.
 - Every control has an accessible name, touch targets are at least 44 pixels, and on small screens the panel fills the width of the screen.
 - Pulse, wave and message animations are removed for reduced motion.
@@ -42,6 +42,7 @@ The target is WCAG 2.1 level AA. This page lists what was done and how it is che
 
 - A polite live region announces plan creation, restoration, download and clearing.
 - After a plan is created, focus moves to the results heading.
+- Timeline phases and idea categories are structured in `<section>` landmarks with explicit `aria-label` attributes. Timeline checkboxes link to their status announcement with `aria-describedby`, and vendor checklist checkboxes provide context-rich accessible names.
 - AI idea generation and answers are announced through live regions, and the busy state is exposed with `aria-busy`.
 - All text from the server or the AI is inserted as text, so assistive technology reads exactly what is shown.
 
