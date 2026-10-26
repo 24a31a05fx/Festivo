@@ -92,7 +92,7 @@ export function planToText(plan, progress, locale = 'en', today = localTodayIso(
 
   return [
     RULE,
-    'CELEBRATION PLANNER - EVENT PLAN',
+    'FESTIVO - EVENT PLAN',
     RULE,
     report.title,
     report.subtitle,

@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for helping to improve Celebration Planner.
+Thank you for helping to improve Festivo.
 
 ## Set up
 

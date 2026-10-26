@@ -110,7 +110,7 @@ export function buildPrintSheet({ plan, progress, locale, today }) {
     h(
       'header',
       { class: 'print-banner' },
-      h('p', { class: 'print-brand' }, h('img', { src: '/logo-mark.svg', alt: '', width: '28', height: '28' }), h('span', { text: 'Celebration Planner - Event plan' })),
+      h('p', { class: 'print-brand' }, h('img', { src: '/logo-mark.svg', alt: '', width: '28', height: '28' }), h('span', { text: 'Festivo - Event plan' })),
       h('h1', { text: report.title }),
       h('p', { class: 'print-subtitle', text: report.subtitle }),
       h('p', { class: 'print-prepared', text: `Prepared on ${report.preparedOn}` }),
@@ -152,6 +152,6 @@ export function buildPrintSheet({ plan, progress, locale, today }) {
       ),
     ),
     section('Notes', h('p', { class: 'print-write' }, h('span', { class: 'print-line' })), h('p', { class: 'print-write' }, h('span', { class: 'print-line' }))),
-    h('footer', { class: 'print-footer' }, h('p', { text: report.disclaimer }), h('p', { text: 'Printed from Celebration Planner.' })),
+    h('footer', { class: 'print-footer' }, h('p', { text: report.disclaimer }), h('p', { text: 'Printed from Festivo.' })),
   );
 }

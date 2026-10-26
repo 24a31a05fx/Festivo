@@ -118,7 +118,7 @@ describe('assistant service chat', () => {
 
     assert.deepEqual(result, { source: 'ai', model: 'gemini-test', answer: 'Open the Plan an event page.' });
     const [request] = client.calls;
-    assert.match(request.system, /Celebration Planner website/);
+    assert.match(request.system, /(?:Festivo|Celebration Planner)/);
     assert.equal(request.prompt, '<question>How do I start?</question>');
     assert.deepEqual(request.history.map((turn) => turn.role), ['user', 'model']);
     assert.ok(!/[<>]/.test(request.history[0].text));

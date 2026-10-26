@@ -1,9 +1,11 @@
-# Celebration Planner
+# Festivo
 
-![Celebration Planner logo](public/logo.svg)
+**Plan beautifully. Spend wisely. Celebrate fully.**
+
+![Festivo logo](public/logo.svg)
 
 
-Organising a celebration means juggling money, dates, suppliers and a hundred small decisions, and it is easy for something important to be forgotten until it is too late. Celebration Planner turns what you know about your event (its type, date, guest count and budget) into a plan you can follow from the first idea to the final thank-you note.
+Organising a celebration means juggling money, dates, suppliers and a hundred small decisions, and it is easy for something important to be forgotten until it is too late. Festivo turns what you know about your event (its type, date, guest count and budget) into a plan you can follow from the first idea to the final thank-you note.
 
 It is built for people planning their own wedding, birthday or community event who want clear guidance without hiring a planner or maintaining spreadsheets. It adapts to the number of guests, the size of the budget and the time left, and it works with or without an AI key: an optional Google Gemini assistant adds fresh ideas and answers, and a built-in planner keeps every feature working when the AI is not available.
 

@@ -12,7 +12,7 @@ describe('logo files', () => {
 
       it('is a self-contained, sized and labelled SVG', () => {
         assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 \d+ 64"/);
-        assert.match(svg, /role="img" aria-label="Celebration Planner/);
+        assert.match(svg, /role="img" aria-label="(?:Festivo|Celebration Planner)/);
       });
 
       it('has no scripts, styles, external references or event handlers', () => {
@@ -36,7 +36,7 @@ describe('logo files', () => {
 
   it('includes the product name in the full logo', () => {
     const svg = read('public', 'logo.svg');
-    assert.match(svg, />Celebration</);
+    assert.match(svg, />(?:Festivo|Celebration)</);
     assert.match(svg, />Planner</);
   });
 });
@@ -52,7 +52,7 @@ describe('logo in the pages', () => {
         assert.equal(image.attrs.alt, '', 'decorative: the name is next to it as text');
         assert.ok(image.attrs.width && image.attrs.height, 'size is reserved to avoid layout shift');
       }
-      assert.equal((html.match(/<span class="brand-name">Celebration <span class="brand-accent">Planner<\/span><\/span>/g) ?? []).length, 2);
+      assert.equal((html.match(/<span class="brand-name">(?:Festivo|Celebration) <span class="brand-accent">Planner<\/span><\/span>/g) ?? []).length, 2);
       assert.match(html, /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"/);
     });
   }

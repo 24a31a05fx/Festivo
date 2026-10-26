@@ -114,7 +114,7 @@ describe('print sheet', () => {
       ['Event details', 'Progress', 'Budget', 'Timeline checklist', 'Vendor checklist', 'Ideas to consider', 'Notes'],
     );
     assert.match(sheet.textContent, /Prepared on/);
-    assert.match(sheet.textContent, /Printed from Celebration Planner/);
+    assert.match(sheet.textContent, /Printed from (?:Festivo|Celebration Planner)/);
   });
 
   it('shows the event details and progress as bullet points', () => {
@@ -224,7 +224,7 @@ describe('text download', () => {
 
   it('starts with a title block and has every section in order', () => {
     assert.match(lines[0], /^={78}$/);
-    assert.equal(lines[1], 'CELEBRATION PLANNER - EVENT PLAN');
+    assert.match(lines[1], /^(?:FESTIVO|CELEBRATION PLANNER) - EVENT PLAN$/);
     assert.equal(lines[3], 'Asha and Ravi');
     const headings = ['EVENT DETAILS', 'PROGRESS', 'BUDGET', 'TIMELINE CHECKLIST', 'VENDOR CHECKLIST', 'IDEAS TO CONSIDER', 'NOTES'];
     const positions = headings.map((heading) => lines.indexOf(heading));

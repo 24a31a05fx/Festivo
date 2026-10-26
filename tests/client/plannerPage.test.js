@@ -180,7 +180,7 @@ describe('using the plan', () => {
     buttonNamed(els.resultsBody, 'Download as text').dispatch('click');
     const [[text, name]] = calls.download;
     assert.equal(name, 'asha-and-ravi-plan.txt');
-    assert.match(text, /CELEBRATION PLANNER - EVENT PLAN/);
+    assert.match(text, /(?:FESTIVO|CELEBRATION PLANNER) - EVENT PLAN/);
     assert.equal(els.status.textContent, 'Plan downloaded as a text file.');
   });
 

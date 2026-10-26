@@ -17,12 +17,12 @@
   }
 
   .print-document {
-    --p-text: #1b1740;
-    --p-muted: #4d4876;
-    --p-primary: #4b2fd0;
-    --p-accent: #b4235f;
-    --p-line: #b9b2dd;
-    --p-tint: #f1eeff;
+    --p-text: #111b2b;
+    --p-muted: #45556a;
+    --p-primary: #b53b1b;
+    --p-accent: #2d604b;
+    --p-line: #ded6c7;
+    --p-tint: #faf7f2;
 
     color: var(--p-text);
     font: 10pt/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -45,7 +45,7 @@
     padding: 7mm 8mm;
     color: #fff;
     border-radius: 3mm;
-    background: linear-gradient(120deg, #2b1a8a, #6a1fb0 55%, #b3195f);
+    background: linear-gradient(120deg, #0e1828, #162842 55%, #233d62);
   }
 
   .print-brand {

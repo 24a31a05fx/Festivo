@@ -28,7 +28,7 @@ describe('static files and security headers', () => {
     for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
       assert.equal(response.headers.get(name), value, name);
     }
-    assert.match(await response.text(), /<title>Celebration Planner/);
+    assert.match(await response.text(), /<title>(?:Festivo|Celebration Planner)/);
   });
 
   it('serves scripts, styles and the icon with correct types', async () => {

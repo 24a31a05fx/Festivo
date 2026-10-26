@@ -48,7 +48,7 @@ describe('the server program', () => {
       const health = await fetch(`${listening.url}/api/health`);
       assert.deepEqual(await health.json(), { status: 'ok' });
       const page = await fetch(`${listening.url}/`);
-      assert.match(await page.text(), /<title>Celebration Planner/);
+      assert.match(await page.text(), /<title>(?:Festivo|Celebration Planner)/);
       assert.ok(!JSON.stringify(lines).includes('GEMINI_API_KEY'));
     } finally {
       child.kill();

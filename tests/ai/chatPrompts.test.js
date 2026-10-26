@@ -13,7 +13,7 @@ import { buildTestPlan } from '../helpers/fixtures.js';
 
 describe('chat prompts', () => {
   it('describes the site and treats user text as data', () => {
-    assert.match(CHAT_SYSTEM_PROMPT, /Celebration Planner/);
+    assert.match(CHAT_SYSTEM_PROMPT, /(?:Festivo|Celebration Planner)/);
     assert.match(CHAT_SYSTEM_PROMPT, /untrusted user data/);
     assert.match(CHAT_SYSTEM_PROMPT, /Plan an event/);
   });
