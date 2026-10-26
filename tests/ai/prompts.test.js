@@ -81,7 +81,7 @@ describe('parseIdeasResponse', () => {
   });
 
   it('drops malformed entries and fills in a default category', () => {
-    const ideas = parseIdeasResponse(JSON.stringify([{ title: 'Only title' }, idea(1), null, { title: 'T', detail: 'D' }]));
+    const ideas = parseIdeasResponse(JSON.stringify([{ title: 123, detail: 456 }, { title: 'Only title' }, idea(1), null, { title: 'T', detail: 'D' }]));
     assert.deepEqual(ideas.map((item) => item.title), ['Idea 1', 'T']);
     assert.equal(ideas[1].category, 'Ideas');
   });

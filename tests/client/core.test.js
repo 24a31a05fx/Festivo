@@ -151,6 +151,8 @@ describe('store', () => {
     const progress = setTaskDone(emptyProgress(), 'w-venue', true);
     assert.equal(store.save({ plan, progress }), true);
     assert.deepEqual(store.load(), { plan, progress });
+    assert.equal(store.save({ plan }), true);
+    assert.deepEqual(store.load(), { plan, progress: emptyProgress() });
   });
 
   it('returns null when nothing is saved', () => {

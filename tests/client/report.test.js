@@ -72,6 +72,16 @@ describe('plan report', () => {
     assert.match(report.budget.reserveNote, /250,000 \(10%\) is held in reserve/);
   });
 
+  it('reports over-budget totals and spend note when spending exceeds total budget', () => {
+    let overProgress = emptyProgress();
+    for (const line of plan.budget.lines) {
+      overProgress = setSpent(overProgress, line.key, line.amount * 2);
+    }
+    const overReport = buildReport(plan, overProgress, { locale: 'en', today: TODAY });
+    assert.match(overReport.progress[2].value, /\(over budget\)/);
+    assert.match(overReport.budget.totals.left, /^Over by/);
+  });
+
   it('groups the timeline by phase with each task checked and described', () => {
     assert.equal(report.phases.reduce((total, group) => total + group.tasks.length, 0), 22);
     const [firstTask, secondTask] = report.phases[0].tasks;
@@ -182,6 +192,14 @@ describe('print sheet', () => {
     const [logo] = byTag(sheet, 'img');
     assert.equal(logo.getAttribute('alt'), '');
     assert.equal(logo.getAttribute('src'), '/logo-mark.svg');
+  });
+
+  it('renders a print sheet and report when there is no contingency reserve', () => {
+    const noReserve = { ...plan, budget: { ...plan.budget, lines: plan.budget.lines.filter((line) => line.key !== 'contingency') } };
+    const noReserveReport = buildReport(noReserve, emptyProgress(), { today: TODAY });
+    assert.equal(noReserveReport.budget.reserveNote, '');
+    const sheetWithoutReserve = buildPrintSheet({ plan: noReserve, progress: emptyProgress(), locale: 'en', today: TODAY });
+    assert.ok(sheetWithoutReserve);
   });
 });
 
@@ -305,5 +323,7 @@ describe('text download', () => {
     assert.ok(wrapped.every((line) => line.length <= 78));
     assert.deepEqual(wrap('', '* '), ['* ']);
     assert.deepEqual(wrap('short', '- ', ''), ['- short']);
+    const custom = wrap(`${'word '.repeat(30)}end`, '* ', '>> ');
+    assert.ok(custom[1].startsWith('>> '));
   });
 });

@@ -129,6 +129,7 @@ describe('locale and downloads', () => {
   it('uses supported browser languages and falls back to English', () => {
     assert.equal(pickLocale('fr-FR'), 'fr-FR');
     assert.equal(pickLocale('en-IN'), 'en-IN');
+    assert.equal(pickLocale('qaa'), 'en');
     assert.equal(pickLocale('not a locale!'), 'en');
     assert.equal(pickLocale(undefined), 'en');
   });

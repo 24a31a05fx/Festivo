@@ -309,6 +309,13 @@ describe('ideas view', () => {
     assert.equal(byTag(view.element, 'script').length, 0);
     assert.equal(byTag(view.element, 'b').length, 0);
   });
+
+  it('falls back to builtin source note and handles setBusy when AI is off', () => {
+    const view = createIdeasView({ ideas: { source: 'custom', items: [] }, aiEnabled: false, onRequestAi: noop });
+    assert.equal(view.sourceNote.textContent, SOURCE_LABELS.builtin);
+    view.setBusy(true, 'Waiting');
+    assert.equal(view.message.textContent, 'Waiting');
+  });
 });
 
 describe('ask view', () => {

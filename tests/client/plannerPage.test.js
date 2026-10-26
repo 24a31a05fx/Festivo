@@ -68,6 +68,10 @@ describe('starting up', () => {
     radios[2].dispatch('change');
     assert.ok(labels().includes('Permits and insurance'));
     assert.ok(!labels().includes('Venue and rentals'));
+
+    radios.forEach((radio) => { radio.checked = false; });
+    radios[2].dispatch('change');
+    assert.equal(labels().length, 0);
   });
 
   it('restores a saved plan into the form and the results', async () => {
@@ -81,6 +85,14 @@ describe('starting up', () => {
     assert.equal(byTag(els.priorityOptions, 'input').find((box) => box.value === 'decor').checked, true);
     assert.deepEqual(stepStates(els), ['done', 'step', 'todo']);
     assert.ok(store.load());
+  });
+
+  it('restores a saved plan when priorities are omitted', async () => {
+    const raw = buildTestPlan();
+    delete raw.input.priorities;
+    const { page, els } = buildPage({ saved: { plan: raw, progress: { tasks: {}, steps: {}, spent: {} } } });
+    await page.init();
+    assert.equal(els.results.hidden, false);
   });
 });
 

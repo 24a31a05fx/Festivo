@@ -7,6 +7,7 @@ import { HttpError } from '../../src/http/errors.js';
 import { createRateLimiter } from '../../src/http/rateLimiter.js';
 import { createRouter } from '../../src/http/router.js';
 import { SECURITY_HEADERS, applySecurityHeaders } from '../../src/http/security.js';
+import { serveStatic } from '../../src/http/staticFiles.js';
 import { loadDotEnv } from '../../src/env.js';
 import { createLogger, silentLogger } from '../../src/logger.js';
 
@@ -214,5 +215,32 @@ describe('dot env file', () => {
     loadDotEnv(undefined, (file) => seen.push(file));
     assert.match(seen[0], /\.env$/);
     assert.doesNotMatch(seen[0], /src[\\/]\.env$/);
+  });
+});
+
+describe('serveStatic', () => {
+  const uncompressed = {
+    type: 'text/plain',
+    body: Buffer.from('hello'),
+    gzip: null,
+    br: null,
+    etag: '"test-etag"',
+  };
+  const files = new Map([['/test.txt', uncompressed]]);
+
+  it('serves uncompressed files when br and gzip are not available', () => {
+    const headers = new Map();
+    let status = 0;
+    let endedBody = null;
+    const req = { method: 'GET', headers: { 'accept-encoding': 'br, gzip' } };
+    const res = {
+      setHeader: (name, value) => headers.set(name, value),
+      writeHead: (code) => { status = code; },
+      end: (data) => { endedBody = data; },
+    };
+    serveStatic(req, res, '/test.txt', files);
+    assert.equal(status, 200);
+    assert.equal(headers.has('Content-Encoding'), false);
+    assert.equal(endedBody.toString(), 'hello');
   });
 });

@@ -101,4 +101,16 @@ describe('buildTimeline', () => {
     assert.equal(near.compressed, true);
     assert.equal(far.compressed, false);
   });
+
+  it('sorts tasks into date order even if defined out of order', () => {
+    const customDef = {
+      budget: [],
+      timeline: [
+        { id: 'late', daysBefore: 10, category: 'planning', title: 'Late', detail: 'Late task' },
+        { id: 'early', daysBefore: 100, category: 'planning', title: 'Early', detail: 'Early task' },
+      ],
+    };
+    const timeline = buildTimeline(customDef, scalerFor(addDays(TODAY, 200), 100));
+    assert.deepEqual(timeline.tasks.map((task) => task.id), ['early', 'late']);
+  });
 });
