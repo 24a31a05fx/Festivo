@@ -4,62 +4,62 @@
    decorative only and is switched off for visitors who ask for reduced motion. */
 
 :root {
-  --bg: #faf7f2;
+  --bg: #faf7f0;
   --surface: #ffffff;
-  --surface-alt: #efebe1;
-  --text: #111b2b;
-  --text-muted: #45556a;
-  --primary: #b53b1b;
-  --primary-2: #8c2c14;
+  --surface-alt: #eae2d6;
+  --text: #29231f;
+  --text-muted: #625b55;
+  --primary: #8e4934;
+  --primary-2: #713827;
   --on-primary: #ffffff;
-  --accent: #2d604b;
-  --border: #ded6c7;
-  --border-strong: #66746f;
+  --accent: #3e523f;
+  --border: #ded6c9;
+  --border-strong: #6d6860;
   --focus: #195ebb;
-  --danger: #b81d28;
-  --success: #1e683b;
+  --danger: #b02a2a;
+  --success: #236938;
   --warning-bg: #fcf0d9;
   --warning-text: #663900;
-  --hero-1: #0e1828;
-  --hero-2: #162842;
-  --hero-3: #233d62;
+  --hero-1: #1f1b18;
+  --hero-2: #2d2621;
+  --hero-3: #3b322b;
   --on-hero: #ffffff;
-  --coral: #e05638;
-  --gold: #d99b26;
-  --teal: #3b7d6e;
+  --coral: #b66a4d;
+  --gold: #c28b2a;
+  --teal: #4f634f;
 
   --radius: 0.85rem;
-  --shadow: 0 2px 8px rgb(14 24 40 / 6%), 0 12px 28px rgb(14 24 40 / 8%);
-  --shadow-lift: 0 4px 14px rgb(14 24 40 / 8%), 0 20px 38px rgb(14 24 40 / 14%);
+  --shadow: 0 2px 6px rgb(41 35 31 / 5%), 0 10px 24px rgb(41 35 31 / 7%);
+  --shadow-lift: 0 4px 12px rgb(41 35 31 / 8%), 0 18px 36px rgb(41 35 31 / 12%);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: Georgia, "Times New Roman", Garamond, serif;
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", Garamond, serif;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0a111c;
-    --surface: #131e2f;
-    --surface-alt: #1b2a40;
-    --text: #f7f4ee;
-    --text-muted: #b3c3d6;
-    --primary: #ff927a;
-    --primary-2: #ffb09e;
-    --on-primary: #0a111c;
-    --accent: #82d4aa;
-    --border: #243750;
-    --border-strong: #718ca8;
-    --focus: #7eb3ff;
-    --danger: #ff8a96;
-    --success: #6fe0a6;
-    --warning-bg: #38280a;
-    --warning-text: #ffdb8f;
-    --hero-1: #070c14;
-    --hero-2: #0f1929;
-    --hero-3: #16253c;
-    --shadow: 0 10px 30px rgb(0 0 0 / 40%);
-    --shadow-lift: 0 16px 40px rgb(0 0 0 / 55%);
+    --bg: #141210;
+    --surface: #1e1a17;
+    --surface-alt: #292420;
+    --text: #f8f5ee;
+    --text-muted: #c4bcb2;
+    --primary: #ff9a80;
+    --primary-2: #ffb8a4;
+    --on-primary: #141210;
+    --accent: #9ad4a6;
+    --border: #3b342e;
+    --border-strong: #8c8276;
+    --focus: #8ab6f8;
+    --danger: #ff8c96;
+    --success: #78e0a8;
+    --warning-bg: #3b280a;
+    --warning-text: #ffdd94;
+    --hero-1: #0d0b09;
+    --hero-2: #161310;
+    --hero-3: #201c18;
+    --shadow: 0 6px 18px rgb(0 0 0 / 45%), 0 16px 36px rgb(0 0 0 / 35%);
+    --shadow-lift: 0 10px 24px rgb(0 0 0 / 55%), 0 24px 44px rgb(0 0 0 / 45%);
     color-scheme: dark;
   }
 }
@@ -209,7 +209,7 @@ a {
   color: var(--on-primary);
   border-radius: 0.95rem;
   background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: 0 6px 14px rgb(181 59 27 / 28%);
+  box-shadow: 0 6px 14px rgb(142 73 52 / 24%);
   transition: transform 0.4s var(--ease);
 }
 
@@ -262,11 +262,11 @@ a {
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgb(181 59 27 / 45%);
+    box-shadow: 0 0 0 0 rgb(142 73 52 / 40%);
   }
 
   100% {
-    box-shadow: 0 0 0 0.6rem rgb(181 59 27 / 0%);
+    box-shadow: 0 0 0 0.6rem rgb(142 73 52 / 0%);
   }
 }
 
@@ -290,7 +290,7 @@ a {
   z-index: 20;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 12px rgb(14 24 40 / 6%);
+  box-shadow: 0 2px 12px rgb(41 35 31 / 6%);
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -326,13 +326,13 @@ a {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.7rem;
-  box-shadow: 0 4px 12px rgb(14 24 40 / 18%);
+  box-shadow: 0 4px 12px rgb(41 35 31 / 16%);
   transition: transform 0.4s var(--ease), box-shadow 0.4s;
 }
 
 .brand:hover .brand-mark {
   transform: rotate(-8deg) scale(1.08);
-  box-shadow: 0 8px 20px rgb(181 59 27 / 35%);
+  box-shadow: 0 8px 20px rgb(142 73 52 / 30%);
 }
 
 .brand-name {
@@ -819,7 +819,7 @@ input[type="date"]:focus,
 select:focus,
 textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgb(181 59 27 / 18%);
+  box-shadow: 0 0 0 4px rgb(142 73 52 / 18%);
 }
 
 textarea {
@@ -1148,10 +1148,12 @@ input[aria-invalid="true"] {
 }
 
 .stat {
-  padding: 0.85rem 1rem;
-  background: var(--surface-alt);
-  border-radius: 0.8rem;
+  padding: 0.95rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   border-bottom: 0.25rem solid var(--primary);
+  box-shadow: var(--shadow);
   transition: transform 0.25s var(--ease), box-shadow 0.25s;
   animation: fade-up 0.6s var(--ease) both;
 }
@@ -1590,7 +1592,7 @@ dialog[open] {
 }
 
 dialog::backdrop {
-  background: rgb(14 24 40 / 65%);
+  background: rgb(31 27 24 / 70%);
 }
 
 .dialog-body {

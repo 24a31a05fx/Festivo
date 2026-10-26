@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Festivo logo">
   <defs>
     <linearGradient id="badge" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0e1828"/>
-      <stop offset="0.5" stop-color="#162842"/>
-      <stop offset="1" stop-color="#233d62"/>
+      <stop offset="0" stop-color="#1f1b18"/>
+      <stop offset="0.5" stop-color="#2d2621"/>
+      <stop offset="1" stop-color="#3b322b"/>
     </linearGradient>
     <linearGradient id="spark" x1="23" y1="29" x2="41" y2="47" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff7d63"/>
-      <stop offset="1" stop-color="#b53b1b"/>
+      <stop offset="0" stop-color="#b66a4d"/>
+      <stop offset="1" stop-color="#8e4934"/>
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="16" fill="url(#badge)"/>
   <circle cx="16" cy="12" r="24" fill="#ffffff" fill-opacity="0.08"/>
-  <rect x="13" y="17" width="38" height="34" rx="8" fill="#faf7f2"/>
-  <path d="M13 25a8 8 0 0 1 8-8h22a8 8 0 0 1 8 8v2H13z" fill="#efebe1"/>
-  <rect x="21" y="11" width="5" height="11" rx="2.5" fill="#e59a1e"/>
-  <rect x="38" y="11" width="5" height="11" rx="2.5" fill="#e59a1e"/>
+  <rect x="13" y="17" width="38" height="34" rx="8" fill="#faf7f0"/>
+  <path d="M13 25a8 8 0 0 1 8-8h22a8 8 0 0 1 8 8v2H13z" fill="#eae2d6"/>
+  <rect x="21" y="11" width="5" height="11" rx="2.5" fill="#c28b2a"/>
+  <rect x="38" y="11" width="5" height="11" rx="2.5" fill="#c28b2a"/>
   <path d="M32 29l2.8 6.2L41 38l-6.2 2.8L32 47l-2.8-6.2L23 38l6.2-2.8z" fill="url(#spark)"/>
-  <circle cx="45" cy="44" r="1.8" fill="#2d604b"/>
-  <circle cx="19" cy="45" r="1.5" fill="#d94e34"/>
+  <circle cx="45" cy="44" r="1.8" fill="#3e523f"/>
+  <circle cx="19" cy="45" r="1.5" fill="#8e4934"/>
 </svg>

@@ -8,7 +8,7 @@
   }
 
   50% {
-    transform: translateY(-0.7rem);
+    transform: translateY(-0.55rem);
   }
 }
 
@@ -22,8 +22,8 @@
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 0.85rem;
+  margin-top: 1.75rem;
 }
 
 .hero-actions .button {
@@ -43,7 +43,7 @@
 
 .hero-visual {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
   justify-items: start;
 }
 
@@ -56,22 +56,25 @@
 .mock-card {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  width: min(100%, 21rem);
-  padding: 0.85rem 1rem;
+  gap: 0.95rem;
+  width: min(100%, 21.5rem);
+  padding: 0.9rem 1.1rem;
   color: var(--on-hero);
-  border: 1px solid rgb(255 255 255 / 38%);
+  border: 1px solid rgb(255 255 255 / 24%);
   border-radius: 1rem;
-  background: rgb(255 255 255 / 15%);
-  box-shadow: 0 14px 32px rgb(0 0 0 / 22%);
+  background: color-mix(in srgb, var(--hero-2) 45%, rgb(255 255 255 / 10%));
+  box-shadow: 0 14px 32px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   animation: fade-up 0.8s var(--ease) both, float 6s ease-in-out infinite;
 }
 
 .mock-card .icon-badge {
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 2.75rem;
+  height: 2.75rem;
   font-size: 1.15rem;
-  background: rgb(255 255 255 / 24%);
+  color: var(--on-hero);
+  background: rgb(255 255 255 / 18%);
   box-shadow: none;
 }
 
@@ -108,27 +111,34 @@
 .mock-text {
   display: grid;
   flex: 1;
-  line-height: 1.3;
+  line-height: 1.35;
+}
+
+.mock-text strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
 }
 
 .mock-text span {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  opacity: 0.88;
 }
 
 .mock-bar {
   flex: none;
-  width: 3rem;
+  width: 3.25rem;
   height: 0.45rem;
   overflow: hidden;
   border-radius: 999px;
-  background: rgb(255 255 255 / 28%);
+  background: rgb(255 255 255 / 24%);
 }
 
 .mock-bar span {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: var(--gold);
+  background: linear-gradient(90deg, var(--gold), var(--coral));
   transform-origin: left;
   animation: bar-grow 1.4s 0.9s var(--ease) both;
 }
@@ -152,7 +162,7 @@
 /* Sections */
 
 .section {
-  padding-block: clamp(3rem, 7vw, 5rem);
+  padding-block: clamp(3.5rem, 8vw, 6rem);
   scroll-margin-top: 4.5rem;
 }
 
@@ -161,22 +171,24 @@
 }
 
 .section-heading {
-  max-width: 40rem;
-  margin-bottom: 2rem;
+  max-width: 42rem;
+  margin-bottom: 2.25rem;
 }
 
 .section-eyebrow {
   display: inline-block;
   margin-bottom: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .section h2 {
-  font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+  font-size: clamp(1.75rem, 3.8vw, 2.5rem);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
 /* A section whose heading and content are centred on the page */
@@ -194,25 +206,26 @@
 
 .about-grid {
   display: grid;
-  gap: 2.5rem;
+  gap: 3rem;
   align-items: center;
 }
 
 @media (min-width: 56rem) {
   .about-grid {
-    grid-template-columns: 1.3fr 1fr;
+    grid-template-columns: 1.25fr 1fr;
   }
 }
 
 .about-grid p {
-  font-size: 1.05rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
   color: var(--text-muted);
 }
 
 .fact-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.15rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -222,7 +235,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1.25rem;
+  padding: 1.4rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-bottom: 0.3rem solid var(--primary);
@@ -244,30 +257,31 @@
 }
 
 .fact-grid li:hover {
-  transform: translateY(-4px) rotate(-1deg);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lift);
 }
 
 .fact-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-bottom: 0.6rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-bottom: 0.75rem;
   font-size: 1.15rem;
   border-radius: 0.75rem;
 }
 
 .fact-grid li:hover .fact-icon {
-  transform: rotate(-10deg) scale(1.12);
+  transform: rotate(-8deg) scale(1.1);
 }
 
 .fact-grid strong {
   font-family: var(--font-display);
-  font-size: 2.4rem;
-  line-height: 1.1;
+  font-size: 2.5rem;
+  line-height: 1.05;
   color: var(--primary);
 }
 
 .fact-grid span:not(.fact-icon) {
+  font-size: 0.9375rem;
   color: var(--text-muted);
 }
 
@@ -275,8 +289,8 @@
 
 .steps-grid {
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
@@ -284,7 +298,7 @@
 
 .step-card {
   position: relative;
-  padding: 1.5rem 1.25rem 1.25rem;
+  padding: 1.75rem 1.4rem 1.4rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -292,23 +306,50 @@
   transition: transform 0.3s var(--ease), box-shadow 0.3s;
 }
 
+.step-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.25rem;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(90deg, var(--primary), var(--coral));
+}
+
+.step-card:nth-child(2)::before {
+  background: linear-gradient(90deg, var(--coral), var(--gold));
+}
+
+.step-card:nth-child(3)::before {
+  background: linear-gradient(90deg, var(--accent), var(--teal));
+}
+
+.step-card:nth-child(4)::before {
+  background: linear-gradient(90deg, var(--teal), var(--primary));
+}
+
 .step-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lift);
 }
 
+.step-card h3 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.3rem;
+}
+
 .step-card p {
   margin: 0;
   color: var(--text-muted);
+  line-height: 1.6;
 }
 
 .step-card .step-label {
-  margin: 0.9rem 0 0.1rem;
-  font-size: 0.8rem;
+  margin: 1rem 0 0.15rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .step-card:hover .step-badge,
@@ -320,15 +361,16 @@
 
 .feature-grid {
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .feature-card {
-  padding: 1.5rem;
+  position: relative;
+  padding: 1.75rem 1.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -337,7 +379,12 @@
 }
 
 .feature-card .icon-badge {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+
+.feature-card h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1.25rem;
 }
 
 .feature-card:hover {
@@ -349,27 +396,29 @@
 .feature-card p {
   margin: 0;
   color: var(--text-muted);
+  line-height: 1.6;
 }
 
 /* Frequently asked questions */
 
 .faq-list {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.9rem;
   max-width: 56rem;
 }
 
 .faq {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.8rem;
-  transition: border-color 0.25s, box-shadow 0.25s;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
 }
 
 .faq:hover,
 .faq[open] {
   border-color: var(--primary);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lift);
 }
 
 .faq summary {
@@ -377,8 +426,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 3rem;
-  padding: 0.8rem 1.1rem;
+  min-height: 3.25rem;
+  padding: 1rem 1.35rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
   font-weight: 700;
   list-style: none;
   cursor: pointer;
@@ -406,8 +457,9 @@
 
 .faq p {
   margin: 0;
-  padding: 0 1.1rem 1.1rem;
+  padding: 0 1.35rem 1.35rem;
   color: var(--text-muted);
+  line-height: 1.7;
   animation: fade-up 0.4s var(--ease) both;
 }
 
