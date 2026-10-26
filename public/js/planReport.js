@@ -2,23 +2,17 @@
 // should be printed or downloaded. The print sheet and the text download are
 // both drawn from it, so they always contain the same information.
 
-import { daysBetween, describeDue, formatDate, formatMoney, percentage, pluralize } from './format.js';
+import { countdownText, describeDue, formatDate, formatMoney, percentage, pluralize } from './format.js';
 import { lineSpend, spendTotals, taskStats, vendorStats } from './progress.js';
 import { SOURCE_LABELS } from './views/ideas.js';
 import { groupByPhase } from './views/timeline.js';
-
-function countdownText(eventDate, today) {
-  const days = daysBetween(today, eventDate);
-  if (days < 0) return 'the date has passed';
-  return days === 0 ? 'today' : `${pluralize(days, 'day')} to go`;
-}
 
 function buildDetails(plan, money, locale, today) {
   const { input, budget, summary } = plan;
   const priorities = budget.lines.filter((line) => line.priority).map((line) => line.label);
   return [
     ['Event type', plan.eventTypeLabel],
-    ['Event date', `${formatDate(input.eventDate, locale)} (${countdownText(input.eventDate, today)})`],
+    ['Event date', `${formatDate(input.eventDate, locale)} (${countdownText(input.eventDate, today, { suffix: true })})`],
     ['Guests', String(input.guestCount)],
     ['Total budget', money(budget.total)],
     ['Budget per guest', `${money(summary.budgetPerGuest)} (${summary.budgetTier} level)`],

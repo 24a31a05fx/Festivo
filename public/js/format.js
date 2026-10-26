@@ -65,3 +65,10 @@ export function describeDue(dueIso, todayIso, done) {
   if (days === 1) return { state: 'upcoming', text: 'Due tomorrow' };
   return { state: 'upcoming', text: `Due in ${pluralize(days, 'day')}` };
 }
+
+export function countdownText(eventDate, today, { suffix = false } = {}) {
+  const days = daysBetween(today, eventDate);
+  if (days < 0) return suffix ? 'the date has passed' : 'Event date has passed';
+  if (days === 0) return suffix ? 'today' : 'Today';
+  return suffix ? `${pluralize(days, 'day')} to go` : pluralize(days, 'day');
+}

@@ -13,6 +13,11 @@ export const MAX_HISTORY_TEXT = 1500;
 const MAX_TITLE_LENGTH = 80;
 const MAX_DETAIL_LENGTH = 300;
 const MAX_CATEGORY_LENGTH = 40;
+const PROMPT_TOP_BUDGET_LINES = 4;
+const PROMPT_MAX_BUDGET_LABEL = 60;
+const PROMPT_MAX_EVENT_TYPE = 40;
+const PROMPT_MAX_FIELD_LENGTH = 80;
+const PROMPT_MAX_INTERESTS_LENGTH = 300;
 
 export function sanitizeForPrompt(value, maxLength) {
   return String(value ?? '')
@@ -48,20 +53,20 @@ export function describeEvent(plan) {
   const { input, summary, budget } = plan;
   const topLines = [...budget.lines]
     .sort((a, b) => b.amount - a.amount)
-    .slice(0, 4)
-    .map((line) => `${sanitizeForPrompt(line.label, 60)}: ${line.amount}`)
+    .slice(0, PROMPT_TOP_BUDGET_LINES)
+    .map((line) => `${sanitizeForPrompt(line.label, PROMPT_MAX_BUDGET_LABEL)}: ${line.amount}`)
     .join(', ');
 
   return [
     '<event_details>',
-    `Type: ${sanitizeForPrompt(plan.eventTypeLabel, 40)}`,
-    `Name: ${sanitizeForPrompt(input.eventName, 80)}`,
+    `Type: ${sanitizeForPrompt(plan.eventTypeLabel, PROMPT_MAX_EVENT_TYPE)}`,
+    `Name: ${sanitizeForPrompt(input.eventName, PROMPT_MAX_FIELD_LENGTH)}`,
     `Date: ${input.eventDate} (${summary.daysUntilEvent} days away)`,
     `Guests: ${input.guestCount}`,
     `Total budget: ${input.totalBudget} ${input.currency} (${summary.budgetTier} tier, ${summary.budgetPerGuest} per guest)`,
-    `Location: ${sanitizeForPrompt(input.location, 80) || 'not stated'}`,
-    `Theme: ${sanitizeForPrompt(input.theme, 80) || 'not stated'}`,
-    `Interests: ${sanitizeForPrompt(input.interests, 300) || 'not stated'}`,
+    `Location: ${sanitizeForPrompt(input.location, PROMPT_MAX_FIELD_LENGTH) || 'not stated'}`,
+    `Theme: ${sanitizeForPrompt(input.theme, PROMPT_MAX_FIELD_LENGTH) || 'not stated'}`,
+    `Interests: ${sanitizeForPrompt(input.interests, PROMPT_MAX_INTERESTS_LENGTH) || 'not stated'}`,
     `Largest budget lines: ${topLines}`,
     '</event_details>',
   ].join('\n');
@@ -87,11 +92,17 @@ export function parseIdeasResponse(text) {
   const end = text.lastIndexOf(']');
   if (start === -1 || end <= start) return [];
 
+  const rawSlice = text.slice(start, end + 1);
   let parsed;
   try {
-    parsed = JSON.parse(text.slice(start, end + 1));
+    parsed = JSON.parse(rawSlice);
   } catch {
-    return [];
+    try {
+      const sanitized = rawSlice.replace(/"(?:\\.|[^"\\])*"|(,\s*([\]}]))/g, (match, _, bracket) => (bracket ? bracket : match));
+      parsed = JSON.parse(sanitized);
+    } catch {
+      return [];
+    }
   }
   if (!Array.isArray(parsed)) return [];
 

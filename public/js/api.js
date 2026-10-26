@@ -18,7 +18,7 @@ export function toFieldErrors(error) {
   return [{ field: 'form', message: error?.message || 'Something went wrong. Please try again.' }];
 }
 
-export function createApi(fetchImpl = globalThis.fetch.bind(globalThis)) {
+export function createApi(fetchImpl = (...args) => globalThis.fetch(...args)) {
   async function request(path, body) {
     let response;
     try {

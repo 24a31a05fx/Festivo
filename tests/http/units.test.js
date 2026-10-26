@@ -77,6 +77,22 @@ describe('rate limiter', () => {
     for (let n = 0; n < 10_050; n += 1) limiter.check(`ip-${n}`);
     assert.ok(limiter.size <= 10_000, `size ${limiter.size} exceeds MAX_ENTRIES ceiling`);
   });
+
+  it('does not allow an active blocked client to bypass limits when other keys arrive', () => {
+    let clock = 0;
+    const limiter = createRateLimiter({ windowMs: 10_000, max: 2, now: () => clock });
+    assert.equal(limiter.check('target').allowed, true);
+    assert.equal(limiter.check('target').allowed, true);
+    assert.equal(limiter.check('target').allowed, false);
+
+    for (let n = 0; n < 10_050; n += 1) {
+      limiter.check(`noise-${n}`);
+      if (n % 1000 === 0) {
+        assert.equal(limiter.check('target').allowed, false);
+      }
+    }
+    assert.equal(limiter.check('target').allowed, false);
+  });
 });
 
 describe('readJsonBody', () => {

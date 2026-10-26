@@ -74,6 +74,21 @@ describe('parseIdeasResponse', () => {
     assert.equal(parseIdeasResponse(wrapped).length, 1);
   });
 
+  it('resiliently handles trailing commas common in LLM output', () => {
+    const raw = '[{"title": "Garden Lights", "detail": "Use warm fairy lights.", "category": "Decor", }, ]';
+    const ideas = parseIdeasResponse(raw);
+    assert.equal(ideas.length, 1);
+    assert.equal(ideas[0].title, 'Garden Lights');
+  });
+
+  it('preserves strings containing bracket and comma sequences while stripping trailing commas', () => {
+    const raw = '[{"title": "Lanterns,}", "detail": "Warm light,]", "category": "Decor", }, ]';
+    const ideas = parseIdeasResponse(raw);
+    assert.equal(ideas.length, 1);
+    assert.equal(ideas[0].title, 'Lanterns,}');
+    assert.equal(ideas[0].detail, 'Warm light,]');
+  });
+
   it('returns nothing for unusable output', () => {
     for (const text of ['', 'no json here', '[not json]', '{"title":"x"}', '][', '[', '[1, 2, 3]']) {
       assert.deepEqual(parseIdeasResponse(text), [], text);

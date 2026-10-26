@@ -204,6 +204,23 @@ describe('model failover', () => {
       assert.equal(net.calls.length, 1, String(status));
     }
   });
+
+  it('gracefully handles 404 model sunset with migration notice and cools down for an hour', async () => {
+    let clock = 0;
+    const migrationMsg = 'models/gemini-2.5-flash is not found. Please use gemini-3.8-flash instead.';
+    const net = network({
+      'gemini-2.5-flash': fail(404, migrationMsg),
+      'gemini-2.5-flash-lite': ok('from fallback'),
+    });
+    const client = clientWith(net, { now: () => clock });
+    const result = await client.complete(request);
+    assert.deepEqual(result, { text: 'from fallback', model: 'gemini-2.5-flash-lite' });
+    assert.equal(client.pool.isBlocked('gemini-2.5-flash'), true);
+    clock = COOLDOWNS_MS.retired - 1;
+    assert.equal(client.pool.isBlocked('gemini-2.5-flash'), true);
+    clock = COOLDOWNS_MS.retired + 1;
+    assert.equal(client.pool.isBlocked('gemini-2.5-flash'), false);
+  });
 });
 
 describe('model pool and turns', () => {
