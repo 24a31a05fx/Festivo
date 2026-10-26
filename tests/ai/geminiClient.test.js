@@ -106,6 +106,7 @@ describe('model failover', () => {
     ['a network failure', new TypeError('fetch failed')],
     ['an empty answer', ok('   ')],
     ['an unreadable answer', { ok: true, status: 200, json: async () => { throw new SyntaxError('bad'); } }],
+    ['an unreadable error payload', { ok: false, status: 500, json: async () => { throw new SyntaxError('not json'); } }],
     ['an answer with no candidates', { ok: true, status: 200, json: async () => ({ promptFeedback: { blockReason: 'OTHER' } }) }],
   ]) {
     it(`falls back after ${label}`, async () => {

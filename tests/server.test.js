@@ -6,10 +6,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { AiUnavailableError } from '../src/ai/geminiClient.js';
+import { createRequestHandler } from '../src/app.js';
+import { loadConfig } from '../src/config.js';
 import { SECURITY_HEADERS } from '../src/http/security.js';
 import { loadStaticFiles } from '../src/http/staticFiles.js';
 import { addDays, todayIso } from '../src/planner/dates.js';
-import { startServer } from './helpers/server.js';
+import { disabledAi, startServer } from './helpers/server.js';
 import { validInput } from './helpers/fixtures.js';
 
 const today = todayIso();
@@ -467,6 +469,19 @@ describe('error handling and logging', () => {
     } finally {
       await app.close();
     }
+  });
+
+  it('destroys the connection if headers were already sent when an error occurs', async () => {
+    let destroyed = false;
+    const req = { method: 'GET', url: '/api/health', headers: { host: 'localhost' }, socket: {}, once() {} };
+    const res = { headersSent: true, setHeader() {}, destroy() { destroyed = true; }, once() {} };
+    const handler = createRequestHandler({
+      config: loadConfig({}),
+      aiClient: disabledAi,
+      now: () => { throw new Error('failure after headers'); },
+    });
+    await handler(req, res);
+    assert.equal(destroyed, true);
   });
 });
 

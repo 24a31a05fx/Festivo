@@ -51,7 +51,7 @@ function build(options = {}) {
   const chat = createChatbot({
     api,
     storage,
-    getContext: options.getContext ?? (() => null),
+    ...(options.getContext !== undefined ? { getContext: options.getContext } : {}),
     today: () => '2026-10-24',
   });
   const el = chat.element;
