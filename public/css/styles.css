@@ -209,7 +209,7 @@ a {
   color: var(--on-primary);
   border-radius: 0.95rem;
   background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: 0 6px 14px rgb(75 47 208 / 28%);
+  box-shadow: 0 6px 14px rgb(181 59 27 / 28%);
   transition: transform 0.4s var(--ease);
 }
 
@@ -262,11 +262,11 @@ a {
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgb(180 35 95 / 45%);
+    box-shadow: 0 0 0 0 rgb(181 59 27 / 45%);
   }
 
   100% {
-    box-shadow: 0 0 0 0.6rem rgb(180 35 95 / 0%);
+    box-shadow: 0 0 0 0.6rem rgb(181 59 27 / 0%);
   }
 }
 
@@ -290,7 +290,7 @@ a {
   z-index: 20;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 12px rgb(43 26 138 / 6%);
+  box-shadow: 0 2px 12px rgb(14 24 40 / 6%);
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -326,13 +326,13 @@ a {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.7rem;
-  box-shadow: 0 4px 12px rgb(75 47 208 / 30%);
+  box-shadow: 0 4px 12px rgb(14 24 40 / 18%);
   transition: transform 0.4s var(--ease), box-shadow 0.4s;
 }
 
 .brand:hover .brand-mark {
   transform: rotate(-8deg) scale(1.08);
-  box-shadow: 0 8px 20px rgb(75 47 208 / 40%);
+  box-shadow: 0 8px 20px rgb(181 59 27 / 35%);
 }
 
 .brand-name {
@@ -672,7 +672,7 @@ a {
   inset: 0 0 auto;
   height: 0.3rem;
   border-radius: var(--radius) var(--radius) 0 0;
-  background: linear-gradient(90deg, var(--primary), var(--primary-2), var(--coral));
+  background: linear-gradient(90deg, var(--hero-2), var(--primary), var(--accent));
 }
 
 .info-panel {
@@ -819,7 +819,7 @@ input[type="date"]:focus,
 select:focus,
 textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgb(75 47 208 / 18%);
+  box-shadow: 0 0 0 4px rgb(181 59 27 / 18%);
 }
 
 textarea {
@@ -1590,7 +1590,7 @@ dialog[open] {
 }
 
 dialog::backdrop {
-  background: rgb(15 12 36 / 65%);
+  background: rgb(14 24 40 / 65%);
 }
 
 .dialog-body {
