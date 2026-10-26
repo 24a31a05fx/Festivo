@@ -282,6 +282,21 @@ describe('text download', () => {
     assert.ok(lines.some((line) => /Over by/.test(line)));
   });
 
+  it('formats budget table rows with exact columns, padding, and marks', () => {
+    const budgetStart = lines.indexOf('BUDGET') + 2;
+    const headerLine = lines[budgetStart];
+    assert.equal(headerLine.slice(0, 4), 'Done');
+    assert.match(headerLine, /^Done Category\s+Share\s+Planned\s+Spent\s+Left$/);
+
+    const venueLine = lines.find((line) => line.includes('Venue and rentals'));
+    assert.ok(venueLine);
+    assert.ok(venueLine.startsWith('[x] '));
+
+    const totalLine = lines.find((line) => /Total\s+100%/.test(line));
+    assert.ok(totalLine);
+    assert.ok(totalLine.startsWith('     Total'));
+  });
+
   it('shows timeline phases, vendor details and notes lines', () => {
     for (const phase of ['Early planning', 'Booking and design', 'Final preparations', 'Event week', 'After the event']) {
       assert.ok(lines.includes(phase), phase);

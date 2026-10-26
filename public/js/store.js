@@ -36,31 +36,47 @@ function isIdeaShape(idea) {
   return isObject(idea) && isText(idea.title) && isText(idea.detail) && isText(idea.category);
 }
 
+function isInputShape(input) {
+  return (
+    isObject(input) &&
+    isText(input.eventName) &&
+    isText(input.eventDate) &&
+    isText(input.eventType) &&
+    isText(input.currency) &&
+    Number.isFinite(input.guestCount)
+  );
+}
+
+function isSummaryShape(summary) {
+  return isObject(summary) && Number.isFinite(summary.daysUntilEvent) && Number.isFinite(summary.budgetPerGuest);
+}
+
+function isBudgetShape(budget) {
+  return isObject(budget) && Number.isFinite(budget.total) && Array.isArray(budget.lines) && budget.lines.every(isLineShape);
+}
+
+function isTimelineShape(timeline) {
+  return isObject(timeline) && Array.isArray(timeline.tasks) && timeline.tasks.every(isTaskShape);
+}
+
+function isVendorsShape(vendors) {
+  return Array.isArray(vendors) && vendors.every(isVendorShape);
+}
+
+function isIdeasShape(ideas) {
+  return isObject(ideas) && Array.isArray(ideas.items) && ideas.items.every(isIdeaShape);
+}
+
 export function isPlanShape(plan) {
   return (
     isObject(plan) &&
-    isObject(plan.input) &&
-    isText(plan.input.eventName) &&
-    isText(plan.input.eventDate) &&
-    isText(plan.input.eventType) &&
-    isText(plan.input.currency) &&
-    Number.isFinite(plan.input.guestCount) &&
+    isInputShape(plan.input) &&
     isText(plan.eventTypeLabel) &&
-    isObject(plan.summary) &&
-    Number.isFinite(plan.summary.daysUntilEvent) &&
-    Number.isFinite(plan.summary.budgetPerGuest) &&
-    isObject(plan.budget) &&
-    Number.isFinite(plan.budget.total) &&
-    Array.isArray(plan.budget.lines) &&
-    plan.budget.lines.every(isLineShape) &&
-    isObject(plan.timeline) &&
-    Array.isArray(plan.timeline.tasks) &&
-    plan.timeline.tasks.every(isTaskShape) &&
-    Array.isArray(plan.vendors) &&
-    plan.vendors.every(isVendorShape) &&
-    isObject(plan.ideas) &&
-    Array.isArray(plan.ideas.items) &&
-    plan.ideas.items.every(isIdeaShape)
+    isSummaryShape(plan.summary) &&
+    isBudgetShape(plan.budget) &&
+    isTimelineShape(plan.timeline) &&
+    isVendorsShape(plan.vendors) &&
+    isIdeasShape(plan.ideas)
   );
 }
 

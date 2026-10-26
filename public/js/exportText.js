@@ -47,13 +47,15 @@ function section(title, lines) {
 function budgetLines({ rows, totals, reserveNote }) {
   const width = Math.max(8, ...rows.map((row) => row.label.length));
   const cell = (value, size, right) => (right ? String(value).padStart(size) : String(value).padEnd(size));
-  const line = (mark, label, share, planned, spent, left) =>
+  const line = ({ mark, label, share, planned, spent, left }) =>
     `${cell(mark, 4)} ${cell(label, width)}  ${cell(share, 6, true)}  ${cell(planned, 14, true)}  ${cell(spent, 14, true)}  ${cell(left, 16, true)}`;
 
   return [
-    line('Done', 'Category', 'Share', 'Planned', 'Spent', 'Left'),
-    ...rows.map((row) => line(box(row.paid), row.label, row.share, row.planned, row.spent, row.left)),
-    line('', 'Total', '100%', totals.planned, totals.spent, totals.left),
+    line({ mark: 'Done', label: 'Category', share: 'Share', planned: 'Planned', spent: 'Spent', left: 'Left' }),
+    ...rows.map((row) =>
+      line({ mark: box(row.paid), label: row.label, share: row.share, planned: row.planned, spent: row.spent, left: row.left }),
+    ),
+    line({ mark: '', label: 'Total', share: '100%', planned: totals.planned, spent: totals.spent, left: totals.left }),
     '',
     ...(reserveNote ? wrap(reserveNote, '* ') : []),
     ...wrap('[x] means the category is fully spent. Enter spending on the Budget tab to update it.', '* '),

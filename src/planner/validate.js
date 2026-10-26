@@ -70,6 +70,47 @@ function validatePriorities(raw, definition, fail) {
   return unique;
 }
 
+function validateEventName(rawName, fail) {
+  const eventName = cleanText(rawName);
+  if (eventName.length === 0) fail('eventName', 'Enter a name for your event.');
+  else if (eventName.length > LIMITS.nameMax) {
+    fail('eventName', `Event name must be ${LIMITS.nameMax} characters or fewer.`);
+  }
+  return eventName;
+}
+
+function validateEventDate(rawDate, today, fail) {
+  const eventDate = typeof rawDate === 'string' ? rawDate : '';
+  if (!parseIsoDate(eventDate)) fail('eventDate', 'Enter the event date as a valid date.');
+  else if (eventDate < today) fail('eventDate', 'The event date must be today or later.');
+  else if (eventDate > addDays(today, LIMITS.planningHorizonDays)) {
+    fail('eventDate', 'The event date must be within the next five years.');
+  }
+  return eventDate;
+}
+
+function validateGuestCount(rawGuestCount, fail) {
+  const guestCount = toInteger(rawGuestCount);
+  if (guestCount === null || guestCount < 1 || guestCount > LIMITS.guestsMax) {
+    fail('guestCount', `Enter a guest count between 1 and ${LIMITS.guestsMax}.`);
+  }
+  return guestCount;
+}
+
+function validateTotalBudget(rawBudget, fail) {
+  const totalBudget = toAmount(rawBudget);
+  if (totalBudget === null || totalBudget < LIMITS.budgetMin || totalBudget > LIMITS.budgetMax) {
+    fail('totalBudget', `Enter a total budget between ${LIMITS.budgetMin} and ${LIMITS.budgetMax.toLocaleString('en-US')}.`);
+  }
+  return totalBudget;
+}
+
+function validateCurrency(rawCurrency, fail) {
+  const currency = typeof rawCurrency === 'string' ? rawCurrency : '';
+  if (!Object.hasOwn(CURRENCIES, currency)) fail('currency', 'Choose a supported currency.');
+  return currency;
+}
+
 // Validates and normalises an event description. Only known fields are copied
 // across, so unexpected properties in the request never reach the planner.
 export function validateEventInput(raw, { today }) {
@@ -83,31 +124,11 @@ export function validateEventInput(raw, { today }) {
   const definition = getEventType(raw.eventType);
   if (!definition) fail('eventType', 'Choose a wedding, birthday or community event.');
 
-  const eventName = cleanText(raw.eventName);
-  if (eventName.length === 0) fail('eventName', 'Enter a name for your event.');
-  else if (eventName.length > LIMITS.nameMax) {
-    fail('eventName', `Event name must be ${LIMITS.nameMax} characters or fewer.`);
-  }
-
-  const eventDate = typeof raw.eventDate === 'string' ? raw.eventDate : '';
-  if (!parseIsoDate(eventDate)) fail('eventDate', 'Enter the event date as a valid date.');
-  else if (eventDate < today) fail('eventDate', 'The event date must be today or later.');
-  else if (eventDate > addDays(today, LIMITS.planningHorizonDays)) {
-    fail('eventDate', 'The event date must be within the next five years.');
-  }
-
-  const guestCount = toInteger(raw.guestCount);
-  if (guestCount === null || guestCount < 1 || guestCount > LIMITS.guestsMax) {
-    fail('guestCount', `Enter a guest count between 1 and ${LIMITS.guestsMax}.`);
-  }
-
-  const totalBudget = toAmount(raw.totalBudget);
-  if (totalBudget === null || totalBudget < LIMITS.budgetMin || totalBudget > LIMITS.budgetMax) {
-    fail('totalBudget', `Enter a total budget between ${LIMITS.budgetMin} and ${LIMITS.budgetMax.toLocaleString('en-US')}.`);
-  }
-
-  const currency = typeof raw.currency === 'string' ? raw.currency : '';
-  if (!Object.hasOwn(CURRENCIES, currency)) fail('currency', 'Choose a supported currency.');
+  const eventName = validateEventName(raw.eventName, fail);
+  const eventDate = validateEventDate(raw.eventDate, today, fail);
+  const guestCount = validateGuestCount(raw.guestCount, fail);
+  const totalBudget = validateTotalBudget(raw.totalBudget, fail);
+  const currency = validateCurrency(raw.currency, fail);
 
   const location = validateOptionalText(raw.location, 'location', 'Location', LIMITS.locationMax, fail);
   const theme = validateOptionalText(raw.theme, 'theme', 'Theme', LIMITS.themeMax, fail);

@@ -59,6 +59,13 @@ function lookupPath(rawPath) {
   return decoded === '/' ? '/index.html' : decoded;
 }
 
+function selectEncoding(file, acceptEncoding) {
+  const accepted = String(acceptEncoding ?? '');
+  if (file.br && /\bbr\b/.test(accepted)) return 'br';
+  if (file.gzip && /\bgzip\b/.test(accepted)) return 'gzip';
+  return null;
+}
+
 export function serveStatic(req, res, pathname, files) {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     throw new HttpError(405, 'Method not allowed.', { headers: { Allow: 'GET, HEAD' } });
@@ -78,8 +85,7 @@ export function serveStatic(req, res, pathname, files) {
     return;
   }
 
-  const accepted = String(req.headers['accept-encoding'] ?? '');
-  const encoding = file.br && /\bbr\b/.test(accepted) ? 'br' : file.gzip && /\bgzip\b/.test(accepted) ? 'gzip' : null;
+  const encoding = selectEncoding(file, req.headers['accept-encoding']);
   const body = encoding ? file[encoding] : file.body;
   if (encoding) res.setHeader('Content-Encoding', encoding);
   res.setHeader('Content-Length', body.length);
