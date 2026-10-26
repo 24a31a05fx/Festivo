@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-8e4934.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-29231f.svg)](package.json)
 [![Dependencies: 0](https://img.shields.io/badge/Dependencies-0-3e523f.svg)](package.json)
-[![Tests](https://img.shields.io/badge/Tests-635%20passing-236938.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-637%20passing-236938.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/Line%20Coverage-100%25-236938.svg)](tests/)
 [![Accessibility](https://img.shields.io/badge/WCAG%202.1-AA%20Tested-8e4934.svg)](docs/ACCESSIBILITY.md)
 
@@ -417,7 +417,7 @@ All development tasks are defined in `package.json` scripts:
 ```bash
 npm start         # Starts the production HTTP server on http://127.0.0.1:3000
 npm run dev       # Starts the server in watch mode (restarts on file changes)
-npm test          # Runs all 635 automated unit, integration, and quality tests
+npm test          # Runs all 637 automated unit, integration, and quality tests
 npm run lint      # Runs the dependency-free static analysis linter
 npm run coverage  # Executes tests with line, branch, and function coverage enforcement
 npm run check     # Executes linting, server syntax check, and the full test suite
@@ -430,12 +430,12 @@ Executed on the current verified codebase:
 | Test Area | Target Directory | Tests Passed | Status |
 | :--- | :--- | :--- | :--- |
 | **Planner Domain Logic** | `tests/planner/*.test.js` | 109 | Passed |
-| **Gemini AI & Fallback Service** | `tests/ai/*.test.js` | 72 | Passed |
-| **HTTP Transport & Security** | `tests/http/*.test.js` | 60 | Passed |
+| **Gemini AI & Fallback Service** | `tests/ai/*.test.js` | 73 | Passed |
+| **HTTP Transport & Security** | `tests/http/*.test.js` | 61 | Passed |
 | **Server & Vercel Integration** | `tests/*.test.js` | 61 | Passed |
 | **Client UI, Views & Chatbot** | `tests/client/*.test.js` | 171 | Passed |
 | **Quality, Contrast & Hygiene** | `tests/quality/*.test.js` | 162 | Passed |
-| **Total Automated Tests** | | **635 passed** | **0 failed, 0 skipped, 0 todo** |
+| **Total Automated Tests** | | **637 passed** | **0 failed, 0 skipped, 0 todo** |
 
 ### Code Coverage Metrics
 

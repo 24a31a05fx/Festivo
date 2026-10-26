@@ -82,8 +82,15 @@ describe('security hygiene', () => {
   });
 
   it('contains no embedded credentials', () => {
+    const keyPatterns = [
+      'AIza[0-9A-Za-z_-]{20,}',
+      'AQ\\.[0-9A-Za-z_-]{20,}',
+      'api[_-]?key\\s*[:=]\\s*[\'"][A-Za-z0-9_.-]{16,}[\'"]',
+      '^[A-Z0-9_]*API_KEY\\s*=\\s*[A-Za-z0-9_.-]{16,}',
+    ];
+    const credPattern = new RegExp(keyPatterns.join('|'), 'im');
     for (const file of sourceFiles.concat(files.filter((candidate) => /\.(md|example)$/.test(candidate)))) {
-      assert.doesNotMatch(text(file), /AIza[0-9A-Za-z_-]{20,}|api[_-]?key\s*[:=]\s*['"][A-Za-z0-9]{16,}/i, relative(file));
+      assert.doesNotMatch(text(file), credPattern, relative(file));
     }
   });
 

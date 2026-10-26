@@ -25,9 +25,10 @@ export function createRateLimiter({ windowMs, max, now = Date.now }) {
     let entry = windows.get(key);
     if (!entry || entry.resetAt <= current) {
       entry = { count: 0, resetAt: current + windowMs };
-      windows.set(key, entry);
     }
     entry.count += 1;
+    windows.delete(key);
+    windows.set(key, entry);
 
     return {
       allowed: entry.count <= max,
