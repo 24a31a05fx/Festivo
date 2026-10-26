@@ -90,8 +90,8 @@ describe('parseIdeasResponse', () => {
   });
 
   it('returns nothing for unusable output', () => {
-    for (const text of ['', 'no json here', '[not json]', '{"title":"x"}', '][', '[', '[1, 2, 3]']) {
-      assert.deepEqual(parseIdeasResponse(text), [], text);
+    for (const text of ['', 'no json here', '[not json]', '{"title":"x"}', '][', '[', '[1, 2, 3]', null, undefined, 123, {}]) {
+      assert.deepEqual(parseIdeasResponse(text), [], String(text));
     }
   });
 
@@ -115,8 +115,11 @@ describe('parseIdeasResponse', () => {
 });
 
 describe('cleanAnswer', () => {
-  it('trims and caps the answer', () => {
+  it('trims and caps the answer, safely handling non-string values', () => {
     assert.equal(cleanAnswer('  hello  \n'), 'hello');
     assert.equal(cleanAnswer('a'.repeat(MAX_ANSWER_LENGTH + 100)).length, MAX_ANSWER_LENGTH);
+    assert.equal(cleanAnswer(null), '');
+    assert.equal(cleanAnswer(undefined), '');
+    assert.equal(cleanAnswer(123), '');
   });
 });

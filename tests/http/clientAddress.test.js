@@ -23,6 +23,8 @@ describe('client address', () => {
     assert.equal(clientAddress(request(undefined), true), '10.0.0.9');
     assert.equal(clientAddress(request('   '), true), '10.0.0.9');
     assert.equal(clientAddress({ headers: {}, socket: {} }, true), 'unknown');
+    assert.equal(clientAddress({ headers: {} }, false), 'unknown');
+    assert.equal(clientAddress({ headers: {} }, true), 'unknown');
   });
 
   it('limits how much of the header it keeps', () => {

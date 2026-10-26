@@ -60,6 +60,15 @@ describe('assistant service ideas', () => {
     assert.equal(warnings[0].event, 'ai_request_failed');
   });
 
+  it('falls back to the built-in planner when logger is omitted and Gemini fails', async () => {
+    const service = createAssistantService({
+      aiClient: fakeClient(() => { throw new AiUnavailableError('down'); }),
+    });
+    const result = await service.generateIdeas(plan);
+    assert.equal(result.source, 'builtin');
+    assert.ok(result.items.length >= 6);
+  });
+
   it('falls back when the answer is unusable', async () => {
     const result = await serviceFor(fakeClient(() => 'Sorry, I cannot help with that.')).generateIdeas(plan);
     assert.equal(result.source, 'builtin');

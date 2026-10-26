@@ -36,10 +36,10 @@ The suite uses `node:test` and `node:assert`, so nothing needs to be installed. 
 
 | Metric | Verified Baseline | Required Threshold | Status |
 | --- | --- | --- | --- |
-| Automated Tests | 643 passed (118 suites) | 100% passing | 0 failed, 0 skipped, 0 todo |
+| Automated Tests | 647 passed (118 suites) | 100% passing | 0 failed, 0 skipped, 0 todo |
 | Line Coverage | 100.00% | 95% | Passing (0 uncovered lines) |
 | Function Coverage | 100.00% | 95% | Passing (0 uncovered functions) |
-| Branch Coverage | 99.46% | 90% | Passing (6 uncovered edge conditions) |
+| Branch Coverage | 99.47% | 90% | Passing (6 uncovered edge conditions) |
 | Static Linter | 0 findings | 0 findings | Clean (`scripts/lint.js`) |
 | Syntax Check | 0 errors | 0 errors | Clean (`node --check server.js`) |
 

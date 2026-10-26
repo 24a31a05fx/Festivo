@@ -11,5 +11,5 @@ export function clientAddress(req, trustProxy) {
     const forwarded = first.trim().slice(0, MAX_ADDRESS_LENGTH);
     if (forwarded) return forwarded;
   }
-  return req.socket.remoteAddress ?? 'unknown';
+  return req.socket?.remoteAddress ?? 'unknown';
 }

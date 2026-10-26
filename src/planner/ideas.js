@@ -8,7 +8,9 @@ const STOP_WORDS = new Set([
 const DEFAULT_IDEA_COUNT = 8;
 
 export function budgetTier(definition, input) {
-  const perGuestUsd = (input.totalBudget / input.guestCount) * CURRENCIES[input.currency].usdRate;
+  const currency = CURRENCIES[input?.currency];
+  if (!currency) throw new RangeError(`Unsupported currency: ${input?.currency}`);
+  const perGuestUsd = (input.totalBudget / input.guestCount) * currency.usdRate;
   const [essentialBelow, balancedBelow] = definition.tierThresholdsUsd;
   if (perGuestUsd < essentialBelow) return 'essential';
   return perGuestUsd < balancedBelow ? 'balanced' : 'premium';
@@ -42,7 +44,7 @@ function matchedKeywords(idea, keywords) {
 // turn so the list stays varied.
 export function selectIdeas(definition, input, count = DEFAULT_IDEA_COUNT) {
   const tier = budgetTier(definition, input);
-  const keywords = extractKeywords(`${input.theme} ${input.interests}`);
+  const keywords = extractKeywords(`${input.theme ?? ''} ${input.interests ?? ''}`);
 
   const ranked = definition.ideas
     .filter((idea) => isEligible(idea, input, tier))
