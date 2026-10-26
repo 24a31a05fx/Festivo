@@ -92,12 +92,17 @@ export function parseIdeasResponse(text) {
   const end = text.lastIndexOf(']');
   if (start === -1 || end <= start) return [];
 
+  const rawSlice = text.slice(start, end + 1);
   let parsed;
   try {
-    const jsonSlice = text.slice(start, end + 1).replace(/,\s*([\]}])/g, '$1');
-    parsed = JSON.parse(jsonSlice);
+    parsed = JSON.parse(rawSlice);
   } catch {
-    return [];
+    try {
+      const sanitized = rawSlice.replace(/"(?:\\.|[^"\\])*"|(,\s*([\]}]))/g, (match, _, bracket) => (bracket ? bracket : match));
+      parsed = JSON.parse(sanitized);
+    } catch {
+      return [];
+    }
   }
   if (!Array.isArray(parsed)) return [];
 
