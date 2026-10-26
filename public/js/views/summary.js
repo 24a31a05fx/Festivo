@@ -1,13 +1,6 @@
 import { h } from '../dom.js';
-import { daysBetween, formatMoney, percentage, pluralize } from '../format.js';
+import { countdownText, formatMoney, percentage } from '../format.js';
 import { spendTotals, taskStats } from '../progress.js';
-
-function countdownText(eventDate, today) {
-  const days = daysBetween(today, eventDate);
-  if (days < 0) return 'Event date has passed';
-  if (days === 0) return 'Today';
-  return pluralize(days, 'day');
-}
 
 function stat(label, valueNode) {
   return h('div', { class: 'stat' }, h('dt', { text: label }), valueNode);

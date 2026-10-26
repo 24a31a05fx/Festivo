@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { ApiError, createApi, toFieldErrors } from '../../public/js/api.js';
 import {
+  countdownText,
   daysBetween,
   describeDue,
   formatDate,
@@ -73,6 +74,19 @@ describe('format helpers', () => {
     assert.deepEqual(describeDue('2026-10-24', today, false), { state: 'upcoming', text: 'Due tomorrow' });
     assert.deepEqual(describeDue('2026-11-02', today, false), { state: 'upcoming', text: 'Due in 10 days' });
     assert.deepEqual(describeDue('2026-10-01', today, true), { state: 'done', text: 'Done' });
+  });
+
+  it('formats countdown text in standalone and suffixed modes', () => {
+    const today = '2026-10-23';
+    assert.equal(countdownText('2026-10-20', today), 'Event date has passed');
+    assert.equal(countdownText('2026-10-23', today), 'Today');
+    assert.equal(countdownText('2026-10-24', today), '1 day');
+    assert.equal(countdownText('2026-11-02', today), '10 days');
+
+    assert.equal(countdownText('2026-10-20', today, { suffix: true }), 'the date has passed');
+    assert.equal(countdownText('2026-10-23', today, { suffix: true }), 'today');
+    assert.equal(countdownText('2026-10-24', today, { suffix: true }), '1 day to go');
+    assert.equal(countdownText('2026-11-02', today, { suffix: true }), '10 days to go');
   });
 });
 
@@ -293,5 +307,22 @@ describe('api client', () => {
   it('reports unreachable servers in plain language', async () => {
     const api = createApi(async () => { throw new TypeError('fetch failed'); });
     await assert.rejects(api.getMeta(), /could not be reached/);
+  });
+
+  it('uses default fetch implementation when called without arguments', async () => {
+    const originalFetch = globalThis.fetch;
+    let invoked = false;
+    globalThis.fetch = async () => {
+      invoked = true;
+      return { ok: true, json: async () => ({ status: 'ok' }) };
+    };
+    try {
+      const api = createApi();
+      const meta = await api.getMeta();
+      assert.equal(invoked, true);
+      assert.deepEqual(meta, { status: 'ok' });
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });

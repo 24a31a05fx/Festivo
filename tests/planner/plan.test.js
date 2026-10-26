@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { HELP_TEXT, answerLocally, formatMoney } from '../../src/planner/assistant.js';
+import { HELP_TEXT, answerLocally, formatMoney, matchBestTopic } from '../../src/planner/assistant.js';
 import { addDays } from '../../src/planner/dates.js';
 import { EVENT_TYPE_KEYS } from '../../src/planner/eventTypes.js';
 import { buildPlan, planFromRequest } from '../../src/planner/plan.js';
@@ -122,5 +122,17 @@ describe('answerLocally', () => {
 describe('formatMoney', () => {
   it('formats whole currency amounts', () => {
     assert.match(formatMoney(1234567, 'USD'), /1,234,567/);
+  });
+});
+
+describe('matchBestTopic', () => {
+  const sampleTopics = [
+    { id: 'venue', words: ['venue', 'hall', 'space'] },
+    { id: 'catering', words: ['food', 'catering', 'menu'] },
+  ];
+
+  it('matches topic by keyword tokens and returns null when no words match', () => {
+    assert.equal(matchBestTopic(sampleTopics, 'tell me about the catering menu')?.id, 'catering');
+    assert.equal(matchBestTopic(sampleTopics, 'completely unrelated question'), null);
   });
 });

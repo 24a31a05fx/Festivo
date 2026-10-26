@@ -23,18 +23,26 @@ function tokenise(question) {
   return String(question).toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
 }
 
-function pickTopic(question) {
+function scoreTopic(topic, tokens) {
+  return tokens.filter((token) => topic.words.some((word) => token.startsWith(word))).length;
+}
+
+export function matchBestTopic(topics, question) {
   const tokens = tokenise(question);
   let best = null;
   let bestScore = 0;
-  for (const topic of TOPICS) {
-    const score = tokens.filter((token) => topic.words.some((word) => token.startsWith(word))).length;
+  for (const topic of topics) {
+    const score = scoreTopic(topic, tokens);
     if (score > bestScore) {
       best = topic;
       bestScore = score;
     }
   }
-  return best?.id ?? null;
+  return best;
+}
+
+function pickTopic(question) {
+  return matchBestTopic(TOPICS, question)?.id ?? null;
 }
 
 function answerBudget(plan) {
@@ -144,17 +152,7 @@ export const GENERAL_HELP_TEXT =
 // Answers for the chat assistant when no model is available and the visitor
 // has no saved plan.
 export function answerGeneral(question) {
-  const tokens = tokenise(question);
-  let best = null;
-  let bestScore = 0;
-  for (const topic of SITE_TOPICS) {
-    const score = tokens.filter((token) => topic.words.some((word) => token.startsWith(word))).length;
-    if (score > bestScore) {
-      best = topic;
-      bestScore = score;
-    }
-  }
-  return best ? best.answer : GENERAL_HELP_TEXT;
+  return matchBestTopic(SITE_TOPICS, question)?.answer ?? GENERAL_HELP_TEXT;
 }
 
 export function answerLocally(question, plan, today) {

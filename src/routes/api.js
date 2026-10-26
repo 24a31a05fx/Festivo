@@ -96,19 +96,19 @@ export function createApiRoutes({ assistant, now = Date.now }) {
       handler: async ({ body }) => {
         const { plan, today } = requirePlan(body, now());
         const question = requireText(body?.question, 'question');
-        return assistant.answerQuestion(plan, question, today);
+        return await assistant.answerQuestion(plan, question, today);
       },
     },
     {
       method: 'POST',
       path: '/api/chat',
       limit: 'ai',
-      handler: ({ body }) => {
+      handler: async ({ body }) => {
         const message = requireText(body?.message, 'message');
         // The saved plan is optional context: a missing or stale one is ignored.
         const today = resolveToday(body?.today, now());
         const planned = body?.event === undefined ? null : planFromRequest(body.event, today);
-        return assistant.chat({
+        return await assistant.chat({
           plan: planned?.ok ? planned.plan : null,
           message,
           history: parseHistory(body?.history),
