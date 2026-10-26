@@ -65,7 +65,7 @@
               <p class="panel-intro">Tell us about your event. Fields marked required are needed to build your plan.</p>
             </div>
 
-            <div id="error-summary" class="error-summary" tabindex="-1" hidden>
+            <div id="error-summary" class="error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" hidden>
               <h3 id="error-summary-title">Please fix the following</h3>
               <ul id="error-summary-list"></ul>
             </div>
@@ -141,7 +141,7 @@
 
                   <div class="field">
                     <label for="totalBudget">Total budget <span class="required">(required)</span></label>
-                    <input id="totalBudget" name="totalBudget" type="number" inputmode="numeric" min="100" step="1" required aria-describedby="hint-totalBudget error-totalBudget" />
+                    <input id="totalBudget" name="totalBudget" type="number" inputmode="numeric" min="100" max="1000000000" step="1" required aria-describedby="hint-totalBudget error-totalBudget" />
                     <p class="hint" id="hint-totalBudget">The full amount you are prepared to spend.</p>
                     <p class="field-error" id="error-totalBudget" hidden></p>
                   </div>

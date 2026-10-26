@@ -7,7 +7,7 @@ import { MAX_HISTORY_TEXT, MAX_HISTORY_TURNS, MAX_QUESTION_LENGTH } from '../ai/
 
 // The client sends its own calendar date so "today" matches the user's time
 // zone. It is only trusted when it is within one day of the server's date.
-export function resolveToday(candidate, nowMs) {
+export function resolveToday(candidate, nowMs = Date.now()) {
   const serverToday = todayIso(new Date(nowMs));
   const usable =
     typeof candidate === 'string' && parseIsoDate(candidate) && Math.abs(diffDays(serverToday, candidate)) <= 1;
@@ -68,6 +68,7 @@ export function createApiRoutes({ assistant, now = Date.now }) {
           interestsMax: LIMITS.interestsMax,
           guestsMax: LIMITS.guestsMax,
           budgetMin: LIMITS.budgetMin,
+          budgetMax: LIMITS.budgetMax,
           questionMax: MAX_QUESTION_LENGTH,
           historyMax: MAX_HISTORY_TURNS,
         },

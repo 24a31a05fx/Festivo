@@ -113,6 +113,13 @@ describe('answerLocally', () => {
     assert.match(answerLocally('headcount', noCatering, TODAY), /120 guests/);
   });
 
+  it('answers budget questions safely when the event has no contingency reserve line', () => {
+    const noReserve = { ...plan, budget: { ...plan.budget, lines: plan.budget.lines.filter((line) => line.key !== 'contingency') } };
+    const answer = answerLocally('How should I split my budget?', noReserve, TODAY);
+    assert.match(answer, /2,500,000/);
+    assert.doesNotMatch(answer, /held in reserve/);
+  });
+
   it('offers help for unrelated questions', () => {
     assert.equal(answerLocally('what is the weather on mars', plan, TODAY), HELP_TEXT);
     assert.equal(answerLocally('', plan, TODAY), HELP_TEXT);

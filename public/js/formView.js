@@ -19,6 +19,7 @@ export function applyLimits(form, limits, todayIso) {
   elements.interests.maxLength = limits.interestsMax;
   elements.guestCount.max = limits.guestsMax;
   elements.totalBudget.min = limits.budgetMin;
+  if (limits.budgetMax) elements.totalBudget.max = limits.budgetMax;
   elements.eventDate.min = todayIso;
 }
 

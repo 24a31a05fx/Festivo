@@ -163,9 +163,12 @@ describe('timeline view', () => {
     const boxes = findAll(element, (node) => node.tagName === 'INPUT');
     assert.equal(boxes.length, plan.timeline.tasks.length);
     assert.ok(boxes.every((box) => box.getAttribute('type') === 'checkbox' && box.parentNode.tagName === 'LABEL'));
+    assert.ok(boxes.every((box) => /^status-/.test(box.getAttribute('aria-describedby'))));
     assert.equal(byTag(element, 'time').length, plan.timeline.tasks.length);
     assert.ok(byTag(element, 'time').every((time) => /^\d{4}-\d{2}-\d{2}$/.test(time.getAttribute('datetime'))));
     assert.ok(byTag(element, 'h4').length >= 3);
+    const sections = byTag(element, 'section');
+    assert.ok(sections.every((s) => s.getAttribute('aria-label') && s.classes.has('phase')));
   });
 
   it('updates status and notifies when a task is ticked', () => {
@@ -213,7 +216,9 @@ describe('vendors view', () => {
     const { element } = createVendorsView({ plan, progress: emptyProgress(), locale: 'en', onToggleStep: noop });
     assert.equal(byTag(element, 'details').length, plan.vendors.length);
     assert.equal(byTag(element, 'summary').length, plan.vendors.length);
-    assert.equal(findAll(element, (node) => node.tagName === 'INPUT').length, plan.vendors.length * 4);
+    const inputs = findAll(element, (node) => node.tagName === 'INPUT');
+    assert.equal(inputs.length, plan.vendors.length * 4);
+    assert.ok(inputs.every((input) => /: Shortlist|: Review|: Pay|: Confirm/.test(input.getAttribute('aria-label'))));
     assert.match(element.textContent, /Questions to ask/);
     assert.match(element.textContent, /0 of 4 steps done/);
     assert.match(element.textContent, /Essential/);
@@ -297,6 +302,8 @@ describe('ideas view', () => {
     assert.equal(view.sourceNote.textContent, SOURCE_LABELS.ai);
     assert.match(view.element.textContent, /Z/);
     assert.doesNotMatch(view.element.textContent, /Matches your interests/);
+    const sections = byTag(view.element, 'section');
+    assert.ok(sections.every((s) => s.getAttribute('aria-label') === 'New'));
   });
 
   it('shows hostile idea text as plain text', () => {

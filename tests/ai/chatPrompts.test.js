@@ -79,5 +79,6 @@ describe('chat request parsing', () => {
     assert.equal(resolveToday('2026-10-30', now), '2026-10-24');
     assert.equal(resolveToday('nope', now), '2026-10-24');
     assert.equal(resolveToday(undefined, now), '2026-10-24');
+    assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(resolveToday()));
   });
 });

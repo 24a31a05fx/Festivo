@@ -230,6 +230,8 @@ describe('form accessibility', () => {
   it('provides an error summary that can receive focus', () => {
     const summary = tags.find((tag) => tag.attrs.id === 'error-summary');
     assert.equal(summary.attrs.tabindex, '-1');
+    assert.equal(summary.attrs.role, 'alert');
+    assert.equal(summary.attrs['aria-labelledby'], 'error-summary-title');
     assert.ok('hidden' in summary.attrs);
   });
 

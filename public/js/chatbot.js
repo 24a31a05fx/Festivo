@@ -33,7 +33,7 @@ export function createChatbot({ api, storage, getContext = () => null, today = l
   const fabLabel = h('span', { class: 'chat-fab-label' });
   const fab = h(
     'button',
-    { type: 'button', class: 'chat-fab', 'aria-expanded': 'false', 'aria-controls': 'chat-panel' },
+    { type: 'button', class: 'chat-fab', 'aria-expanded': 'false', 'aria-haspopup': 'dialog', 'aria-controls': 'chat-panel' },
     fabIcon,
     fabLabel,
   );
@@ -142,6 +142,7 @@ export function createChatbot({ api, storage, getContext = () => null, today = l
       class: 'chat-panel',
       role: 'dialog',
       'aria-labelledby': 'chat-title',
+      'aria-modal': 'false',
       hidden: true,
       on: { keydown: (event) => { if (event.key === 'Escape') close(); } },
     },
