@@ -230,6 +230,30 @@ describe('store', () => {
     assert.equal(isPlanShape({ ...plan, vendors: [{ ...plan.vendors[0], questions: [1] }] }), false);
   });
 
+  it('rejects primitives, missing sub-objects, and malformed collections in isPlanShape', () => {
+    for (const invalid of [undefined, null, 123, 'plan', true, [], {}]) {
+      assert.equal(isPlanShape(invalid), false, String(invalid));
+    }
+    assert.equal(isPlanShape({ ...plan, input: undefined }), false);
+    assert.equal(isPlanShape({ ...plan, input: { ...plan.input, eventName: 123 } }), false);
+    assert.equal(isPlanShape({ ...plan, input: { ...plan.input, guestCount: NaN } }), false);
+    assert.equal(isPlanShape({ ...plan, eventTypeLabel: 123 }), false);
+    assert.equal(isPlanShape({ ...plan, summary: undefined }), false);
+    assert.equal(isPlanShape({ ...plan, summary: { ...plan.summary, budgetPerGuest: NaN } }), false);
+    assert.equal(isPlanShape({ ...plan, budget: undefined }), false);
+    assert.equal(isPlanShape({ ...plan, budget: { ...plan.budget, total: NaN } }), false);
+    assert.equal(isPlanShape({ ...plan, budget: { ...plan.budget, lines: 'not-array' } }), false);
+    assert.equal(isPlanShape({ ...plan, budget: { ...plan.budget, lines: [{ ...plan.budget.lines[0], amount: NaN }] } }), false);
+    assert.equal(isPlanShape({ ...plan, timeline: undefined }), false);
+    assert.equal(isPlanShape({ ...plan, timeline: { tasks: 'not-array' } }), false);
+    assert.equal(isPlanShape({ ...plan, timeline: { tasks: [{ ...plan.timeline.tasks[0], id: 123 }] } }), false);
+    assert.equal(isPlanShape({ ...plan, vendors: 'not-array' }), false);
+    assert.equal(isPlanShape({ ...plan, vendors: [{ ...plan.vendors[0], checklist: 'not-array' }] }), false);
+    assert.equal(isPlanShape({ ...plan, ideas: undefined }), false);
+    assert.equal(isPlanShape({ ...plan, ideas: { items: 'not-array' } }), false);
+    assert.equal(isPlanShape({ ...plan, ideas: { items: [{ ...plan.ideas.items[0], category: 123 }] } }), false);
+  });
+
   it('finds browser storage when present and tolerates its absence', () => {
     assert.equal(browserStorage(), null);
     globalThis.localStorage = memoryStorage();

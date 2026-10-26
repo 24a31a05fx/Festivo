@@ -62,15 +62,11 @@ export function exportedNames(source) {
   return [...source.matchAll(/^export\s+(?:async\s+)?(?:function\*?|const|class)\s+([A-Za-z_$][\w$]*)/gm)].map((match) => match[1]);
 }
 
-export function lintSource(file, source, project) {
-  const findings = [];
-  const add = (line, message) => findings.push(`${file}:${line}: ${message}`);
-  // A file that contains regular expressions with quote characters cannot be
-  // read by the simple stripper, so it can opt out of the rules that need it.
-  const skipCode = source.slice(0, 400).includes(SKIP_CODE_RULES);
-  const code = skipCode ? '' : stripNonCode(source);
-  const lines = source.split('\n');
+// A name counts as used when it is not part of a longer name or a property access.
+const used = (name) => new RegExp(`(?<![\\w$])(?<![\\w$)\\]]\\.)${name.replace(/\$/g, '\\$')}(?![\\w$])`, 'g');
 
+function checkLineRules(file, source, add) {
+  const lines = source.split('\n');
   lines.forEach((text, index) => {
     const number = index + 1;
     if (/\s+$/.test(text)) add(number, 'trailing whitespace');
@@ -79,7 +75,62 @@ export function lintSource(file, source, project) {
     if (LEFTOVER.test(text)) add(number, 'leftover work marker');
   });
   if (!source.endsWith('\n')) add(lines.length, 'missing final newline');
+}
 
+const stepDepth = (ch, depth) => depth + ('({['.includes(ch) ? 1 : (')}]'.includes(ch) ? -1 : 0));
+
+function countParameters(paramStr) {
+  let count = 0;
+  let depth = 0;
+  let current = '';
+  for (let i = 0; i < paramStr.length; i++) {
+    const ch = paramStr[i];
+    depth = stepDepth(ch, depth);
+    if (ch === ',' && depth === 0) {
+      if (current.trim()) count++;
+      current = '';
+    } else current += ch;
+  }
+  if (current.trim()) count++;
+  return count;
+}
+
+function checkOrdinaryFunctions(code, add) {
+  for (const match of code.matchAll(/\bfunction\s*\*?\s*(?:[A-Za-z0-9_$]+)?\s*\(/g)) {
+    const openParen = match.index + match[0].length - 1;
+    let depth = 1;
+    let j = openParen + 1;
+    while (j < code.length && depth > 0) {
+      if (code[j] === '(') depth++;
+      else if (code[j] === ')') depth--;
+      j++;
+    }
+    const count = countParameters(code.slice(openParen + 1, j - 1));
+    if (count > 5) {
+      const line = code.slice(0, match.index).split('\n').length;
+      add(line, `function has ${count} parameters (maximum is 5)`);
+    }
+  }
+}
+
+function checkArrowFunctions(code, add) {
+  for (const match of code.matchAll(/\)\s*=>/g)) {
+    let depth = 1;
+    let j = match.index - 1;
+    while (j >= 0 && depth > 0) {
+      if (code[j] === ')') depth++;
+      else if (code[j] === '(') depth--;
+      j--;
+    }
+    const count = countParameters(code.slice(j + 2, match.index));
+    if (count > 5) {
+      const line = code.slice(0, j + 1).split('\n').length;
+      add(line, `function has ${count} parameters (maximum is 5)`);
+    }
+  }
+}
+
+function checkCodeRules(file, code, add) {
   code.split('\n').forEach((text, index) => {
     const number = index + 1;
     if (/(?<![=!<>])==(?!=)|!=(?!=)/.test(text)) add(number, 'use strict equality');
@@ -87,20 +138,38 @@ export function lintSource(file, source, project) {
     if (/\bconsole\./.test(text) && !file.startsWith('tests/') && !file.startsWith('scripts/')) add(number, 'no console output in application code');
     if (/\bdebugger\b/.test(text)) add(number, 'debugger statement');
   });
+  checkOrdinaryFunctions(code, add);
+  checkArrowFunctions(code, add);
+}
 
-  // A name counts as used when it is not part of a longer name or a property access.
-  const used = (name) => new RegExp(`(?<![\\w$])(?<![\\w$)\\]]\\.)${name.replace(/\$/g, '\\$')}(?![\\w$])`, 'g');
-  for (const name of skipCode ? [] : importedNames(source)) {
+function checkImports(source, code, add) {
+  for (const name of importedNames(source)) {
     const occurrences = (code.match(used(name)) ?? []).length + (source.match(new RegExp(`\\$\\{[^}]*\\b${name}\\b`, 'g')) ?? []).length;
     if (occurrences < 2) add(1, `unused import ${name}`);
   }
+}
 
-  if (project) {
-    for (const name of skipCode ? [] : exportedNames(source)) {
-      const consumers = project.filter((other) => other.file !== file && !other.file.startsWith('tests/') && importedNames(other.source).includes(name));
-      const sameFile = (code.match(used(name)) ?? []).length > 1;
-      if (consumers.length === 0 && !sameFile && !file.startsWith('tests/')) add(1, `export ${name} is not used by any application module`);
-    }
+function checkExports(file, source, code, project, add) {
+  for (const name of exportedNames(source)) {
+    const consumers = project.filter((other) => other.file !== file && !other.file.startsWith('tests/') && importedNames(other.source).includes(name));
+    const sameFile = (code.match(used(name)) ?? []).length > 1;
+    if (consumers.length === 0 && !sameFile && !file.startsWith('tests/')) add(1, `export ${name} is not used by any application module`);
+  }
+}
+
+export function lintSource(file, source, project) {
+  const findings = [];
+  const add = (line, message) => findings.push(`${file}:${line}: ${message}`);
+  // A file that contains regular expressions with quote characters cannot be
+  // read by the simple stripper, so it can opt out of the rules that need it.
+  const skipCode = source.slice(0, 400).includes(SKIP_CODE_RULES);
+  const code = skipCode ? '' : stripNonCode(source);
+
+  checkLineRules(file, source, add);
+  if (!skipCode) {
+    checkCodeRules(file, code, add);
+    checkImports(source, code, add);
+    if (project) checkExports(file, source, code, project, add);
   }
   return findings;
 }

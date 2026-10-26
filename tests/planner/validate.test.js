@@ -114,6 +114,60 @@ describe('validateEventInput', () => {
     const result = validate(validInput({ eventType: 'party', priorities: ['anything'] }));
     assert.deepEqual(fieldsOf(result), ['eventType']);
   });
+
+  it('preserves exact error ordering when all fields are invalid', () => {
+    const allInvalid = {
+      eventType: 'invalid',
+      eventName: '',
+      eventDate: 'invalid',
+      guestCount: 'none',
+      totalBudget: 'none',
+      currency: 'invalid',
+      location: 123,
+      theme: 123,
+      interests: 123,
+      priorities: 'not-an-array',
+    };
+    const result = validate(allInvalid);
+    assert.equal(result.ok, false);
+    assert.deepEqual(fieldsOf(result), [
+      'eventType', 'eventName', 'eventDate', 'guestCount', 'totalBudget', 'currency', 'location', 'theme', 'interests',
+    ]);
+  });
+
+  it('preserves error ordering including priorities when definition is valid', () => {
+    const invalidWithValidType = {
+      ...validInput(),
+      eventName: '',
+      eventDate: 'invalid',
+      guestCount: 'none',
+      totalBudget: 'none',
+      currency: 'invalid',
+      location: 123,
+      theme: 123,
+      interests: 123,
+      priorities: 'not-an-array',
+    };
+    const result = validate(invalidWithValidType);
+    assert.equal(result.ok, false);
+    assert.deepEqual(fieldsOf(result), [
+      'eventName', 'eventDate', 'guestCount', 'totalBudget', 'currency', 'location', 'theme', 'interests', 'priorities',
+    ]);
+  });
+
+  it('accepts exact boundary values for eventName, guestCount, and totalBudget', () => {
+    const boundary = {
+      ...validInput(),
+      eventName: 'x'.repeat(LIMITS.nameMax),
+      guestCount: LIMITS.guestsMax,
+      totalBudget: LIMITS.budgetMax,
+    };
+    const result = validate(boundary);
+    assert.equal(result.ok, true);
+    assert.equal(result.value.eventName.length, LIMITS.nameMax);
+    assert.equal(result.value.guestCount, LIMITS.guestsMax);
+    assert.equal(result.value.totalBudget, LIMITS.budgetMax);
+  });
 });
 
 describe('cleanText', () => {

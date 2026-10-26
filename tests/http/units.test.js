@@ -263,21 +263,70 @@ describe('serveStatic', () => {
     br: null,
     etag: '"test-etag"',
   };
-  const files = new Map([['/test.txt', uncompressed]]);
+  const compressed = {
+    type: 'text/plain',
+    body: Buffer.from('hello uncompressed'),
+    gzip: Buffer.from('hello gzip'),
+    br: Buffer.from('hello br'),
+    etag: '"compressed-etag"',
+  };
+  const files = new Map([
+    ['/test.txt', uncompressed],
+    ['/compressed.txt', compressed],
+  ]);
 
-  it('serves uncompressed files when br and gzip are not available', () => {
+  function mockRes() {
     const headers = new Map();
-    let status = 0;
-    let endedBody = null;
-    const req = { method: 'GET', headers: { 'accept-encoding': 'br, gzip' } };
+    const result = { status: 0, body: null, headers };
     const res = {
       setHeader: (name, value) => headers.set(name, value),
-      writeHead: (code) => { status = code; },
-      end: (data) => { endedBody = data; },
+      writeHead: (code) => { result.status = code; },
+      end: (data) => { result.body = data; },
     };
+    return { result, res };
+  }
+
+  it('serves uncompressed files when br and gzip are not available', () => {
+    const { result, res } = mockRes();
+    const req = { method: 'GET', headers: { 'accept-encoding': 'br, gzip' } };
     serveStatic(req, res, '/test.txt', files);
-    assert.equal(status, 200);
-    assert.equal(headers.has('Content-Encoding'), false);
-    assert.equal(endedBody.toString(), 'hello');
+    assert.equal(result.status, 200);
+    assert.equal(result.headers.has('Content-Encoding'), false);
+    assert.equal(result.body.toString(), 'hello');
+  });
+
+  it('serves brotli when client accepts br', () => {
+    const { result, res } = mockRes();
+    const req = { method: 'GET', headers: { 'accept-encoding': 'br, gzip' } };
+    serveStatic(req, res, '/compressed.txt', files);
+    assert.equal(result.status, 200);
+    assert.equal(result.headers.get('Content-Encoding'), 'br');
+    assert.equal(result.body.toString(), 'hello br');
+  });
+
+  it('serves gzip when client accepts gzip only', () => {
+    const { result, res } = mockRes();
+    const req = { method: 'GET', headers: { 'accept-encoding': 'gzip' } };
+    serveStatic(req, res, '/compressed.txt', files);
+    assert.equal(result.status, 200);
+    assert.equal(result.headers.get('Content-Encoding'), 'gzip');
+    assert.equal(result.body.toString(), 'hello gzip');
+  });
+
+  it('answers 304 when if-none-match matches etag', () => {
+    const { result, res } = mockRes();
+    const req = { method: 'GET', headers: { 'if-none-match': '"test-etag"' } };
+    serveStatic(req, res, '/test.txt', files);
+    assert.equal(result.status, 304);
+    assert.equal(result.body, undefined);
+  });
+
+  it('answers HEAD requests with headers and undefined body', () => {
+    const { result, res } = mockRes();
+    const req = { method: 'HEAD', headers: {} };
+    serveStatic(req, res, '/test.txt', files);
+    assert.equal(result.status, 200);
+    assert.equal(result.headers.get('Content-Length'), uncompressed.body.length);
+    assert.equal(result.body, undefined);
   });
 });

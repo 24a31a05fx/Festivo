@@ -51,6 +51,45 @@ describe('dom helper', () => {
   it('writes boolean attributes as empty strings', () => {
     assert.equal(h('div', { 'data-flag': true }).getAttribute('data-flag'), '');
   });
+
+  it('sets all supported DOM properties directly on the node', () => {
+    const input = h('input', { checked: true, value: 'test', disabled: false, hidden: true });
+    assert.equal(input.checked, true);
+    assert.equal(input.value, 'test');
+    assert.equal(input.disabled, false);
+    assert.equal(input.hidden, true);
+
+    const details = h('details', { open: true });
+    assert.equal(details.open, true);
+
+    const option = h('option', { selected: true });
+    assert.equal(option.selected, true);
+  });
+
+  it('attaches multiple event listeners and converts numeric attributes to strings', () => {
+    const events = [];
+    const node = h('input', {
+      type: 'range',
+      min: 0,
+      max: 100,
+      step: 5,
+      on: {
+        focus: () => events.push('focus'),
+        input: () => events.push('input'),
+      },
+    });
+    assert.equal(node.getAttribute('min'), '0');
+    assert.equal(node.getAttribute('max'), '100');
+    assert.equal(node.getAttribute('step'), '5');
+    node.dispatch('focus');
+    node.dispatch('input');
+    assert.deepEqual(events, ['focus', 'input']);
+  });
+
+  it('flattens child arrays and excludes null, undefined, and false', () => {
+    const node = h('div', {}, ['a', null, false], ['b', undefined], 'c');
+    assert.equal(node.textContent, 'abc');
+  });
 });
 
 describe('summary view', () => {
@@ -254,6 +293,50 @@ describe('vendors view', () => {
     });
     assert.match(byTag(element, 'summary')[0].textContent, /1 of 4 steps done/);
     assert.equal(byTag(element, 'input')[1].checked, true);
+  });
+
+  it('renders exact vendor card DOM structure, badges, headings, and question lists', () => {
+    const { element } = createVendorsView({ plan, progress: emptyProgress(), locale: 'en', onToggleStep: noop });
+    const cards = byTag(element, 'details');
+    assert.ok(cards.every((card) => card.classList.contains('vendor')));
+
+    const firstCard = cards[0];
+    const summary = byTag(firstCard, 'summary')[0];
+    const body = byClass(firstCard, 'vendor-body')[0];
+    assert.ok(summary);
+    assert.ok(body);
+
+    const name = byClass(summary, 'vendor-name')[0];
+    assert.equal(name.textContent, plan.vendors[0].label);
+
+    const meta = byClass(summary, 'vendor-meta')[0];
+    assert.match(meta.textContent, /Budget.*book by/);
+
+    const headings = byTag(body, 'h4').map((heading) => heading.textContent);
+    assert.deepEqual(headings, ['Checklist', 'Questions to ask']);
+
+    const questionList = byClass(body, 'bullet-list')[0];
+    const questionItems = byTag(questionList, 'li').map((li) => li.textContent);
+    assert.deepEqual(questionItems, plan.vendors[0].questions);
+  });
+
+  it('reconciles state across multiple vendors when re-rendered with updated progress', () => {
+    const v0 = plan.vendors[0];
+    const v1 = plan.vendors[1];
+    let prog = setStepDone(emptyProgress(), v0.checklist[0].id, true);
+    prog = setStepDone(prog, v1.checklist[0].id, true);
+    prog = setStepDone(prog, v1.checklist[1].id, true);
+
+    const { element } = createVendorsView({ plan, progress: prog, locale: 'en', onToggleStep: noop });
+    const summaries = byTag(element, 'summary');
+    assert.match(summaries[0].textContent, /1 of 4 steps done/);
+    assert.match(summaries[1].textContent, /2 of 4 steps done/);
+
+    const inputs = byTag(element, 'input');
+    assert.equal(inputs[0].checked, true);
+    assert.equal(inputs[4].checked, true);
+    assert.equal(inputs[5].checked, true);
+    assert.equal(inputs[1].checked, false);
   });
 });
 
